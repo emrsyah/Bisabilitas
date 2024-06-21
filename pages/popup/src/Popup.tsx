@@ -25,7 +25,7 @@ const Popup = () => {
           target="_blank"
           rel="noopener noreferrer"
           style={{ color: theme === 'light' ? '#0281dc' : undefined, marginBottom: '10px' }}>
-          Learn React!
+          Learn React halo
         </a>
         <ToggleButton>Toggle theme</ToggleButton>
       </header>
