@@ -7,6 +7,27 @@ import { ComponentPropsWithoutRef } from 'react';
 const Popup = () => {
   const theme = useStorageSuspense(exampleThemeStorage);
 
+  const changeFont = async () => {
+    alert('changeFont 2');
+    // TODO: change font size
+    // changeFontSize
+    console.log("halo 20")
+    const [tab] = await chrome.tabs.query({ active: true });
+    console.log("halo 1")
+    console.log(tab)
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id! },
+      func: () => {
+        alert('changeFont 3');
+        console.log("halo 3")
+        document.body.style.backgroundColor = 'red';
+    //       document.body.style.fontSize = '10px';
+    //           const style = document.createElement('style');
+    // style.textContent = `* { font-size: ${10}px !important; }`;
+    // document.head.append(style);
+      }
+  });
+  };
   return (
     <div
       className="App"
@@ -15,7 +36,7 @@ const Popup = () => {
       }}>
       <header className="App-header" style={{ color: theme === 'light' ? '#222' : '#eee' }}>
         <img src={chrome.runtime.getURL('new-tab/logo.svg')} className="App-logo" alt="logo" />
-
+<button onClick={changeFont}>change font</button>
         <p>
           Edit <code>pages/popup/src/Popup.tsx</code> and save to reload.
         </p>
