@@ -1,6 +1,6 @@
 import {  withErrorBoundary, withSuspense } from '@chrome-extension-boilerplate/shared';
 import { EyeIcon, ComputerDesktopIcon, SpeakerWaveIcon, NewspaperIcon, DocumentArrowUpIcon, PhotoIcon, ArrowsPointingOutIcon, BeakerIcon } from '@heroicons/react/16/solid'
-import { dyslexicFontStorage, contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
+import { fontSizeStorage,dyslexicFontStorage, contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
@@ -47,10 +47,15 @@ const toggleDyslexicFont = async () => {
   await dyslexicFontStorage.toggle()
 }
 
+const toggleFontSize = async () => {
+  await fontSizeStorage.toggle()
+}
+
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot())
   const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot())
   const [dyslexic, setDyslexic] = React.useState(dyslexicFontStorage.getSnapshot())
+  const [fontSize, setFontSize] = React.useState(fontSizeStorage.getSnapshot())
 
 
   React.useEffect(() => {
@@ -62,6 +67,9 @@ const SidePanel = () => {
     })
     dyslexicFontStorage.subscribe(() => {
       setDyslexic(dyslexicFontStorage.getSnapshot())
+    })
+    fontSizeStorage.subscribe(() => {
+      setFontSize(fontSizeStorage.getSnapshot())
     })
     // console.log("testo")
   }, [])
@@ -126,7 +134,26 @@ const SidePanel = () => {
     {
       title: 'Pembesar Teks',
       desc: 'Perbesar teks bagi penyandang disabilitas penglihatan tanpa merusak layout.',
-      icon: <DocumentArrowUpIcon className='h-6 w-6' />
+      icon: <DocumentArrowUpIcon className='h-6 w-6' />,
+      onClick: toggleFontSize,
+      currentState: fontSize? fontSize : "normal",
+      normalState: "normal",
+      state: [{
+        label: "Pembesar Teks",
+        value: "normal"
+      },
+      {
+        label: "Pembesar Teks Medium",
+        value: "medium"
+      },
+      {
+        label: "Pembesar Teks Besar",
+        value: "large"
+      },
+      {
+        label: "Pembesar Teks Ekstra Besar",
+        value: "extra-large"
+      }]
     },
     {
       title: 'Sembuyikan Gambar',

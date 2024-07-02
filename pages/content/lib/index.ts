@@ -4,7 +4,7 @@ import { hideImages } from './hideImage';
 import { toggleSaturation } from './toggleSaturation';
 import {applyTextSpacing} from './toggleTextSpacing'
 import { applyDyslexicFont } from './changeDyslexic';
-// import { changeFontSize } from '@lib/changeFontSize';
+import { applyTextSize } from './changeFontSize';
 
 console.log('content script loaded');
 
@@ -14,5 +14,6 @@ void hideImages()
 void applyTextSpacing()
 void toggleSaturation()
 void applyDyslexicFont()
+void applyTextSize()
 // void changeFontSize()
 // void applyFontSize('normal')

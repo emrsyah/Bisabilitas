@@ -1,45 +1,29 @@
 import { fontSizeStorage } from '@chrome-extension-boilerplate/storage';
 
-export async function changeFontSize() {
-    // Define a mapping from font size keys to scale factors
-    const fontSizeMap = {
-      small: 0.8,
-      normal: 1.0,
-      medium: 1.04,
-      large: 1.08,
-    };
-
-    
-    type FontSize = 'small' | 'normal' | 'medium' | 'large';
-    
-    // Function to apply the font size adjustment
-    async function applyFontSize({ current, previous } : { current: FontSize, previous: FontSize | null }) {
-      const currentScaleFactor = fontSizeMap[current];
-      const previousScaleFactor = previous ? fontSizeMap[previous] : 1.0;
-      console.log(currentScaleFactor, previousScaleFactor);
-      const scaleFactor = currentScaleFactor / previousScaleFactor;
-    
-      const elements = document.querySelectorAll('*');
-      elements.forEach((element) => {
-        if (element instanceof HTMLElement) {
-          const computedStyle = window.getComputedStyle(element);
-          const currentSize = parseFloat(computedStyle.fontSize);
-          element.style.fontSize = `${currentSize * scaleFactor}px`;
-        }
-      });
+export async function applyTextSize() {
+  function setTextSize(state: "normal" | "medium" | "large" | "extra-large") {
+    const bodyElement = document.body;
+    switch (state) {
+      case 'normal':
+        bodyElement.style.fontSize = '1em';
+        break;
+      case 'medium':
+        bodyElement.style.fontSize = '1.1em';
+        break;
+      case 'large':
+        bodyElement.style.fontSize = '1.3em';
+        break;
+      case 'extra-large':
+        bodyElement.style.fontSize = '1.4em';
+        break;
     }
-    
-    fontSizeStorage.get().then(applyFontSize);
-    
-    // Subscribe to changes and apply the new font size
-    fontSizeStorage.subscribe(() => {
-      const fontSize = fontSizeStorage.getSnapshot();
-      if (fontSize) {
-        applyFontSize(fontSize);
-      }
-    });
-    
-    // Execute the initial setup
-    // storeOriginalFontSize();
-}
+  }
 
+  fontSizeStorage.get().then(setTextSize);
+  fontSizeStorage.subscribe(() => {
+    const state = fontSizeStorage.getSnapshot();
+    if (state) {
+      setTextSize(state);
+    }
+  });
+}
