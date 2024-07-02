@@ -1,5 +1,4 @@
-import { exampleContrastStorage } from '@chrome-extension-boilerplate/storage';
-
+import { contrastStorage } from '@chrome-extension-boilerplate/storage';
 export async function toggleContrast() {
   const media = document.querySelectorAll('img, picture, video');
 
@@ -9,13 +8,13 @@ export async function toggleContrast() {
 
     switch (contrast) {
       case 'low':
-        htmlElement.style.filter = "contrast(90%)";
+        htmlElement.style.filter = "contrast(150%)";
         break;
       case 'medium':
-        htmlElement.style.filter = "contrast(100%)";
+        htmlElement.style.filter = "contrast(200%)";
         break;
       case 'high':
-        htmlElement.style.filter = "contrast(110%)";
+        htmlElement.style.filter = "contrast(300%)";
         break;
       case 'normal':
       default:
@@ -44,9 +43,10 @@ export async function toggleContrast() {
     });
   }
 
-  exampleContrastStorage.get().then(applyContrast);
-  exampleContrastStorage.subscribe(() => {
-    const contrast = exampleContrastStorage.getSnapshot();
+  contrastStorage.get().then(applyContrast);
+  contrastStorage.subscribe(() => {
+    // alert("haloo")
+    const contrast = contrastStorage.getSnapshot();
     if (contrast) {
       applyContrast(contrast);
     }
