@@ -1,6 +1,6 @@
 import {  withErrorBoundary, withSuspense } from '@chrome-extension-boilerplate/shared';
 import { EyeIcon, ComputerDesktopIcon, SpeakerWaveIcon, NewspaperIcon, DocumentArrowUpIcon, PhotoIcon, ArrowsPointingOutIcon, BeakerIcon } from '@heroicons/react/16/solid'
-import { contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
+import { dyslexicFontStorage, contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
@@ -42,9 +42,15 @@ const toggleTextSpacing = async () => {
   await textSpacingStorage.toggle()
 }
 
+const toggleDyslexicFont = async () => {
+  // alert('hi')
+  await dyslexicFontStorage.toggle()
+}
+
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot())
   const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot())
+  const [dyslexic, setDyslexic] = React.useState(dyslexicFontStorage.getSnapshot())
 
 
   React.useEffect(() => {
@@ -53,6 +59,9 @@ const SidePanel = () => {
     })
     textSpacingStorage.subscribe(() => {
       setTextSpacing(textSpacingStorage.getSnapshot())
+    })
+    dyslexicFontStorage.subscribe(() => {
+      setDyslexic(dyslexicFontStorage.getSnapshot())
     })
     // console.log("testo")
   }, [])
@@ -99,7 +108,20 @@ const SidePanel = () => {
     {
       title: 'Dyslexia Friendly',
       desc: 'Dukung penyandang disleksia dengan teks yang lebih mudah dibaca.',
-      icon: <NewspaperIcon className='h-6 w-6' />
+      icon: <NewspaperIcon className='h-6 w-6' />,
+      onClick: toggleDyslexicFont,
+      currentState: dyslexic? dyslexic : "default",
+      normalState: "default",
+      state : [
+        {
+          label: "Dyslexia Friendly",
+          value: "default"
+        },
+        {
+          label: "Dyslexia Friendly On",
+          value: "openDyslexic"
+        }
+      ]
     },
     {
       title: 'Pembesar Teks',

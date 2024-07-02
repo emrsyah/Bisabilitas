@@ -59,7 +59,7 @@ const manifest = Object.assign(
     devtools_page: 'devtools/index.html',
     web_accessible_resources: [
       {
-        resources: ['*.js', '*.css', '*.svg', 'bisabilitas-logo-32.png', 'bisabilitas-logo-128.png'],
+        resources: ['*.js', '*.css', '*.svg', 'bisabilitas-logo-32.png', 'bisabilitas-logo-128.png', "fonts/OpenDyslexic-Regular.otf", "fonts/OpenDyslexic-Bold.otf", "fonts/OpenDyslexic-Italic.otf"],
         matches: ['*://*/*'],
       },
     ],
