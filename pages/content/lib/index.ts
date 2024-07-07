@@ -7,6 +7,7 @@ import { applyDyslexicFont } from './changeDyslexic';
 import { applyTextSize } from './changeFontSize';
 import { applyFocusRead } from './focusRead';
 import { applySoundNavigation } from './soundNavigation';
+// import {toggleAiAssistant} from './AiAssistant'
 
 console.log('content script loaded');
 
@@ -19,5 +20,6 @@ void applyDyslexicFont()
 void applyTextSize()
 void applyFocusRead()
 void applySoundNavigation()
+// void toggleAiAssistant()
 // void changeFontSize()
 // void applyFontSize('normal')

@@ -1,6 +1,6 @@
 import {  withErrorBoundary, withSuspense } from '@chrome-extension-boilerplate/shared';
-import { EyeIcon, ComputerDesktopIcon, SpeakerWaveIcon, NewspaperIcon, DocumentArrowUpIcon, PhotoIcon, ArrowsPointingOutIcon, BeakerIcon } from '@heroicons/react/16/solid'
-import {  soundNavigationStorage, focusReadStorage, fontSizeStorage,dyslexicFontStorage, contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
+import { BoltIcon, EyeIcon, ComputerDesktopIcon, SpeakerWaveIcon, NewspaperIcon, DocumentArrowUpIcon, PhotoIcon, ArrowsPointingOutIcon, BeakerIcon } from '@heroicons/react/16/solid'
+import { aiAssistantStorage, soundNavigationStorage, focusReadStorage, fontSizeStorage,dyslexicFontStorage, contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
@@ -68,6 +68,7 @@ const SidePanel = () => {
   const [saturation, setSaturation] = React.useState(saturationStorage.getSnapshot())
   const [soundNavigation, setSoundNavigation] = React.useState(soundNavigationStorage.getSnapshot())
   const [focusRead, setFocusRead] = React.useState(focusReadStorage.getSnapshot())
+  const [aiAssistant, setAiAssistant] = React.useState(aiAssistantStorage.getSnapshot())
 
 
   React.useEffect(() => {
@@ -94,6 +95,9 @@ const SidePanel = () => {
     })
     focusReadStorage.subscribe(() => {
       setFocusRead(focusReadStorage.getSnapshot())
+    })
+    aiAssistantStorage.subscribe(() => {
+      setAiAssistant(aiAssistantStorage.getSnapshot())
     })
     // console.log("testo")
   }, [])
@@ -278,17 +282,21 @@ const SidePanel = () => {
   return (
     <div>
       <div className='bg-blue-900 text-white p-2'>
-      <nav className='mx-4 sm:mx-auto my-2 max-w-sm'>
+      <nav className='mx-4 sm:mx-auto my-2 max-w-sm flex items-center justify-between'>
         <h1 className='font-semibold text-xl'>Bisabilitas</h1>
+        <button className='w-8 text-black hover:bg-blue-100 h-8 rounded-md justify-center items-center flex bg-white '>
+          <h1 className=' font-bold '>ID</h1>
+        </button>
       </nav>
       {/* <button onClick={changeContrast}>cek</button>
       <h2>{contrast}</h2>
       <h3>cek bagian bawah</h3> */}
       </div>
       <main className='grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6'>
-        <div className='col-span-2 bg-white px-4 pt-4 pb-2 rounded-md'>
-          <h1>ChatBot</h1>
-        </div>
+        <button onClick={() => aiAssistantStorage.toggle()} className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == "enabled" ? "bg-blue-600 text-white" : " bg-white text-blue-600"} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
+          <BoltIcon className='h-6 w-6' />
+          <h1 className='text-lg font-bold '>AI Assistant <span className='text-sm'>(beta)</span></h1>
+        </button>
         {accesibilityData.map((d) => (  
         <AccesibilityCard
         key={d.title}
