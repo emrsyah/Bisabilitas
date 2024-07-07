@@ -67,6 +67,7 @@ const SidePanel = () => {
   const [hideImageState, setHideImageState] = React.useState(hideImagesStorage.getSnapshot())
   const [saturation, setSaturation] = React.useState(saturationStorage.getSnapshot())
   const [soundNavigation, setSoundNavigation] = React.useState(soundNavigationStorage.getSnapshot())
+  const [focusRead, setFocusRead] = React.useState(focusReadStorage.getSnapshot())
 
 
   React.useEffect(() => {
@@ -90,6 +91,9 @@ const SidePanel = () => {
     })
     soundNavigationStorage.subscribe(() => {
       setSoundNavigation(soundNavigationStorage.getSnapshot())
+    })
+    focusReadStorage.subscribe(() => {
+      setFocusRead(focusReadStorage.getSnapshot())
     })
     // console.log("testo")
   }, [])
@@ -127,7 +131,19 @@ const SidePanel = () => {
       title: 'Fokus Membaca',
       desc: 'Tingkatkan konsentrasi penyandang disabilitas kognitif saat membaca.',
       icon: <ComputerDesktopIcon className='h-6 w-6' />,
-      onClick: toggleFocusRead
+      onClick: toggleFocusRead,
+      currentState: focusRead ? focusRead : "disabled",
+      normalState: "disabled",
+      state: [
+        {
+          label: "Fokus Membaca",
+          value: "disabled"
+        },
+        {
+          label: "Matikan Fokus Membaca",
+          value: "enabled"
+        }
+      ]
     },
     {
       title: 'Navigasi Suara',
@@ -263,13 +279,16 @@ const SidePanel = () => {
     <div>
       <div className='bg-blue-900 text-white p-2'>
       <nav className='mx-4 sm:mx-auto my-2 max-w-sm'>
-        <h1 className='font-semibold text-xl'>Bisabilitasi</h1>
+        <h1 className='font-semibold text-xl'>Bisabilitas</h1>
       </nav>
       {/* <button onClick={changeContrast}>cek</button>
       <h2>{contrast}</h2>
       <h3>cek bagian bawah</h3> */}
       </div>
       <main className='grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6'>
+        <div className='col-span-2 bg-white px-4 pt-4 pb-2 rounded-md'>
+          <h1>ChatBot</h1>
+        </div>
         {accesibilityData.map((d) => (  
         <AccesibilityCard
         key={d.title}
@@ -322,9 +341,9 @@ const AccesibilityCard = ({desc, icon, title, onClick, currentState, normalState
     return label
   }
   return (
-    <button onClick={onClick} className='text-start cursor-pointer col-span-1  w-full shadow px-4 pt-4 pb-2 rounded-sm flex flex-col gap-2'>
+    <button onClick={onClick} className='hover:border-[2px] hover:border-blue-600 border-[2px] border-gray-100 text-start cursor-pointer col-span-1  w-full shadow px-4 pt-4 pb-2 rounded-md flex flex-col gap-2'>
       {state ? (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center w-full gap-1">
       {state.map((s) => (
         <>
         <div key={s.value} className={`h-1 w-full rounded-full ${s.value === currentState ? "bg-blue-600" : "bg-gray-500"}`}></div>

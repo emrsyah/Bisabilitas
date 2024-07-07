@@ -1,7 +1,7 @@
 import { soundNavigationStorage } from '@chrome-extension-boilerplate/storage';
 
 export async function applySoundNavigation() {
-  // let isActive = false;
+  let isActive = false;
   let floatingMenu: HTMLDivElement | null = null;
   let clickableElements: Array<HTMLElement> = [];
   let recognition: SpeechRecognition | null = null;
