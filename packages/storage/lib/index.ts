@@ -6,5 +6,7 @@ import {hideImagesStorage} from './hideImagesStorage'
 import {saturationStorage} from './saturationStorage'
 import {textSpacingStorage} from'./textSpacingStorage'
 import {dyslexicFontStorage} from'./dyslexicFontStorage'
+import {focusReadStorage} from './focusReadStorage'
+import {soundNavigationStorage} from './soundNavigationStorage'
 
-export {dyslexicFontStorage,textSpacingStorage, saturationStorage, hideImagesStorage, contrastStorage, exampleThemeStorage, fontSizeStorage, createStorage, StorageType, SessionAccessLevel, BaseStorage };
+export {soundNavigationStorage, focusReadStorage, dyslexicFontStorage,textSpacingStorage, saturationStorage, hideImagesStorage, contrastStorage, exampleThemeStorage, fontSizeStorage, createStorage, StorageType, SessionAccessLevel, BaseStorage };

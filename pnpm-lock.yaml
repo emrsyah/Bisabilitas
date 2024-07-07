@@ -11,6 +11,9 @@ importers:
       '@heroicons/react':
         specifier: ^2.1.4
         version: 2.1.4(react@18.3.1)
+      '@types/dom-speech-recognition':
+        specifier: ^0.0.4
+        version: 0.0.4
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -751,6 +754,9 @@ packages:
 
   '@types/chrome@0.0.268':
     resolution: {integrity: sha512-7N1QH9buudSJ7sI8Pe4mBHJr5oZ48s0hcanI9w3wgijAlv1OZNUZve9JR4x42dn5lJ5Sm87V1JNfnoh10EnQlA==}
+
+  '@types/dom-speech-recognition@0.0.4':
+    resolution: {integrity: sha512-zf2GwV/G6TdaLwpLDcGTIkHnXf8JEf/viMux+khqKQKDa8/8BAUtXXZS563GnvJ4Fg0PBLGAaFf2GekEVSZ6GQ==}
 
   '@types/eslint-scope@3.7.7':
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
@@ -2739,6 +2745,8 @@ snapshots:
     dependencies:
       '@types/filesystem': 0.0.34
       '@types/har-format': 1.2.14
+
+  '@types/dom-speech-recognition@0.0.4': {}
 
   '@types/eslint-scope@3.7.7':
     dependencies:

@@ -1,6 +1,6 @@
 import {  withErrorBoundary, withSuspense } from '@chrome-extension-boilerplate/shared';
 import { EyeIcon, ComputerDesktopIcon, SpeakerWaveIcon, NewspaperIcon, DocumentArrowUpIcon, PhotoIcon, ArrowsPointingOutIcon, BeakerIcon } from '@heroicons/react/16/solid'
-import { fontSizeStorage,dyslexicFontStorage, contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
+import {  soundNavigationStorage, focusReadStorage, fontSizeStorage,dyslexicFontStorage, contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
@@ -51,11 +51,22 @@ const toggleFontSize = async () => {
   await fontSizeStorage.toggle()
 }
 
+const toggleFocusRead = async () => {
+ await focusReadStorage.toggle()
+}
+
+const activateSoundNavigation = async () => {
+  await soundNavigationStorage.toggle()
+}
+
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot())
   const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot())
   const [dyslexic, setDyslexic] = React.useState(dyslexicFontStorage.getSnapshot())
   const [fontSize, setFontSize] = React.useState(fontSizeStorage.getSnapshot())
+  const [hideImageState, setHideImageState] = React.useState(hideImagesStorage.getSnapshot())
+  const [saturation, setSaturation] = React.useState(saturationStorage.getSnapshot())
+  const [soundNavigation, setSoundNavigation] = React.useState(soundNavigationStorage.getSnapshot())
 
 
   React.useEffect(() => {
@@ -70,6 +81,15 @@ const SidePanel = () => {
     })
     fontSizeStorage.subscribe(() => {
       setFontSize(fontSizeStorage.getSnapshot())
+    })
+    hideImagesStorage.subscribe(() => {
+      setHideImageState(hideImagesStorage.getSnapshot())
+    })
+    saturationStorage.subscribe(() => {
+      setSaturation(saturationStorage.getSnapshot())
+    })
+    soundNavigationStorage.subscribe(() => {
+      setSoundNavigation(soundNavigationStorage.getSnapshot())
     })
     // console.log("testo")
   }, [])
@@ -106,12 +126,26 @@ const SidePanel = () => {
     {
       title: 'Fokus Membaca',
       desc: 'Tingkatkan konsentrasi penyandang disabilitas kognitif saat membaca.',
-      icon: <ComputerDesktopIcon className='h-6 w-6' />
+      icon: <ComputerDesktopIcon className='h-6 w-6' />,
+      onClick: toggleFocusRead
     },
     {
       title: 'Navigasi Suara',
       desc: 'Berdayakan penyandang disabilitas motorik menjelajah web dengan suara.',
-      icon: <SpeakerWaveIcon className='h-6 w-6' />
+      icon: <SpeakerWaveIcon className='h-6 w-6' />,
+      onClick: activateSoundNavigation,
+      currentState: soundNavigation ? soundNavigation : "disabled",
+      normalState: "disabled",
+      state: [
+        {
+          label: "Navigasi Suara",
+          value: "disabled"
+        },
+        {
+          label: "Matikan Navigasi Suara",
+          value: "enabled"
+        }
+      ]
     },
     {
       title: 'Dyslexia Friendly',
@@ -159,7 +193,19 @@ const SidePanel = () => {
       title: 'Sembuyikan Gambar',
       desc: 'Bantu penyandang disabilitas fokus dengan menyederhanakan tampilan.',
       icon: <PhotoIcon className='h-6 w-6' />,
-      onClick: hideImage
+      onClick: hideImage,
+      currentState: hideImageState ? hideImageState : "disabled",
+      normalState: "disabled",
+      state: [
+        {
+          label: "Sembunyikan Gambar",
+          value: "disabled"
+        }, 
+        {
+          label: "Munculkan Gambar",
+          value: "enabled",
+        }
+      ]
     },
     {
       title: 'Jarak Teks',
@@ -190,7 +236,23 @@ const SidePanel = () => {
       title: 'Pengatur Saturasi',
       desc: 'Atur warna sesuai kebutuhan penyandang disabilitas sensitif cahaya.',
       icon: <BeakerIcon className='h-6 w-6' />,
-      onClick: toggleSaturation
+      onClick: toggleSaturation,
+      currentState: saturation ? saturation : "normal",
+      normalState: "normal",
+      state : [
+        {
+          label: "Pengatur Saturasi",
+          value: "normal"
+        },
+        {
+          label: "Saturasi Rendah",
+          value: "low"
+        },
+        {
+          label: "Saturasi Tinggi",
+          value: "high"
+        }
+      ]
     },
   ]
 
@@ -203,9 +265,9 @@ const SidePanel = () => {
       <nav className='mx-4 sm:mx-auto my-2 max-w-sm'>
         <h1 className='font-semibold text-xl'>Bisabilitasi</h1>
       </nav>
-      <button onClick={changeContrast}>cek</button>
+      {/* <button onClick={changeContrast}>cek</button>
       <h2>{contrast}</h2>
-      <h3>cek bagian bawah</h3>
+      <h3>cek bagian bawah</h3> */}
       </div>
       <main className='grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6'>
         {accesibilityData.map((d) => (  
