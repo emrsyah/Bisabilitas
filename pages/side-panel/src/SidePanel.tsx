@@ -1,5 +1,5 @@
 import {  withErrorBoundary, withSuspense } from '@chrome-extension-boilerplate/shared';
-import { BoltIcon, EyeIcon, ComputerDesktopIcon, SpeakerWaveIcon, NewspaperIcon, DocumentArrowUpIcon, PhotoIcon, ArrowsPointingOutIcon, BeakerIcon } from '@heroicons/react/16/solid'
+import { RectangleGroupIcon, BoltIcon, EyeIcon, ComputerDesktopIcon, SpeakerWaveIcon, NewspaperIcon, DocumentArrowUpIcon, PhotoIcon, ArrowsPointingOutIcon, BeakerIcon } from '@heroicons/react/16/solid'
 import { aiAssistantStorage, soundNavigationStorage, focusReadStorage, fontSizeStorage,dyslexicFontStorage, contrastStorage, hideImagesStorage, saturationStorage, textSpacingStorage } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
@@ -18,7 +18,8 @@ type AccesibilityCardProps = {
   onClick?: () => void
   state?: StateProps[]
   currentState?: string
-  normalState?: string
+  normalState?: string,
+  smallDisplay?: boolean
 };
 
 const changeContrast = async () => {
@@ -69,6 +70,7 @@ const SidePanel = () => {
   const [soundNavigation, setSoundNavigation] = React.useState(soundNavigationStorage.getSnapshot())
   const [focusRead, setFocusRead] = React.useState(focusReadStorage.getSnapshot())
   const [aiAssistant, setAiAssistant] = React.useState(aiAssistantStorage.getSnapshot())
+  const [smallDisplay, setSmallDisplay] = React.useState(false)
 
 
   React.useEffect(() => {
@@ -276,9 +278,6 @@ const SidePanel = () => {
     },
   ]
 
-  
-
-
   return (
     <div>
       <div className='bg-blue-900 text-white p-2'>
@@ -288,17 +287,25 @@ const SidePanel = () => {
           <h1 className=' font-bold '>ID</h1>
         </button>
       </nav>
-      {/* <button onClick={changeContrast}>cek</button>
-      <h2>{contrast}</h2>
-      <h3>cek bagian bawah</h3> */}
       </div>
       <main className='grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6'>
         <button onClick={() => aiAssistantStorage.toggle()} className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == "enabled" ? "bg-blue-600 text-white" : " bg-white text-blue-600"} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
           <BoltIcon className='h-6 w-6' />
           <h1 className='text-lg font-bold '>AI Assistant <span className='text-sm'>(beta)</span></h1>
         </button>
+        <div className='h-[1.6px] w-full bg-gray-200 rounded-full col-span-2'></div>
+        <div className='flex items-center justify-between gap-1 w-full col-span-2'>
+          <div className='flex items-center gap-2'>
+        <RectangleGroupIcon className='h-6 w-6 p-1' />
+        <p className='font-semibold text-lg'>{smallDisplay ? "Display Kecil" : "Display Lebar"}</p>
+          </div>
+        <Toggle initialState={smallDisplay} onToggle={setSmallDisplay} />
+        </div>
+        <div className='h-[1.6px] w-full bg-gray-200 rounded-full col-span-2'></div>
+        <div  className={`grid gap-4 ${smallDisplay ? "grid-cols-3" : "grid-cols-2"} col-span-2`}>
         {accesibilityData.map((d) => (  
         <AccesibilityCard
+        smallDisplay={smallDisplay}
         key={d.title}
         desc={d.desc}
         title={d.title}
@@ -309,36 +316,14 @@ const SidePanel = () => {
         normalState={d.normalState}
         />
         ))}
+        </div>
       </main>
     </div>
-    // <div
-    //   className="App"
-    //   style={{
-    //     backgroundColor: theme === 'light' ? '#eee' : '#222',
-    //   }}>
-    //   <header className="App-header" style={{ color: theme === 'light' ? '#222' : '#eee' }}>
-    //     <img src={chrome.runtime.getURL('side-panel/logo.svg')} className="App-logo" alt="logo" />
-    //     <button onClick={changeFont}>Current Font: {fontSize.current} - Bigger</button>
-    //     <p>
-    //       Edit <code>pages/side-panel/src/SidePanel.tsx</code> and save to reload.
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //       style={{ color: theme === 'light' ? '#0281dc' : undefined, marginBottom: '10px' }}>
-    //       Learn Reactx
-    //     </a>
-    //     <h6>The color of this paragraph is defined using SASS.</h6>
-    //     <ToggleButton>Toggle themex</ToggleButton>
-    //   </header>
-    // </div>
   );
 };
 
 
-const AccesibilityCard = ({desc, icon, title, onClick, currentState, normalState, state} : AccesibilityCardProps) => {
+const AccesibilityCard = ({desc, icon, title, onClick, currentState, normalState, state, smallDisplay} : AccesibilityCardProps) => {
   const findLabel = (state: StateProps[]) => {
     let label = ""
     state.forEach(s => {
@@ -349,7 +334,7 @@ const AccesibilityCard = ({desc, icon, title, onClick, currentState, normalState
     return label
   }
   return (
-    <button onClick={onClick} className='hover:border-[2px] hover:border-blue-600 border-[2px] border-gray-100 text-start cursor-pointer col-span-1  w-full shadow px-4 pt-4 pb-2 rounded-md flex flex-col gap-2'>
+    <button onClick={onClick} className={`hover:border-[2px] hover:border-blue-600 border-[2px] border-gray-100 text-start cursor-pointer col-span-1  w-full shadow px-4 pt-4 pb-2 rounded-md flex flex-col gap-2 ${smallDisplay ? "items-center" : ""}`}>
       {state ? (
     <div className="flex items-center w-full gap-1">
       {state.map((s) => (
@@ -361,18 +346,56 @@ const AccesibilityCard = ({desc, icon, title, onClick, currentState, normalState
       ) : (
     <div className='h-1 w-full rounded-full bg-blue-600'></div>
       )}
-      <span className='text-blue-700'>
+      <span className={`text-blue-700 ${smallDisplay ? "mt-1" : ""}`}>
     {icon}
       </span>
+      <div className={`${smallDisplay ? "text-center !text-sm" : "text-start"}`}>
       {normalState ? (
-        <h2 className='font-medium text-blue-900 text-base'>{findLabel(state!)}</h2>
+        <h2 className={`font-medium text-blue-900 ${smallDisplay ? "text-sm" : "text-base"}`}>{findLabel(state!)}</h2>
       ) : (
-        <h2 className='font-medium text-blue-900 text-base'>{title}</h2>
+        <h2 className={`font-medium text-blue-900 ${smallDisplay ? "text-sm" : "text-base"}`}>{title}</h2>
       )}
+      </div>
+      {smallDisplay ? (
+null
+      ) : (
     <p className='text-xs text-blue-950'>{desc}</p>
+      )}
   </button>
   )
 }
+
+interface ToggleProps {
+  initialState?: boolean;
+  onToggle?: (isOn: boolean) => void;
+}
+
+const Toggle: React.FC<ToggleProps> = ({ initialState = false, onToggle }) => {
+  const [isOn, setIsOn] = React.useState(initialState);
+
+  const handleToggle = () => {
+    const newState = !isOn;
+    setIsOn(newState);
+    if (onToggle) {
+      onToggle(newState);
+    }
+  };
+
+  return (
+    <button 
+      onClick={handleToggle}
+      className={`
+        w-14 h-7 flex items-center rounded-full p-1 cursor-pointer
+        ${isOn ? 'bg-blue-600 justify-end' : 'bg-gray-300 justify-start'}
+      `}
+    >
+      <div className={`
+        bg-white w-5 h-5 rounded-full shadow-md transform duration-300 ease-in-out
+       
+      `} />
+    </button>
+  );
+};
 
 // const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
 //   const theme = useStorageSuspense(exampleThemeStorage);
