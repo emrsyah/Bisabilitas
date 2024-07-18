@@ -10,6 +10,7 @@ import {
   PhotoIcon,
   ArrowsPointingOutIcon,
   BeakerIcon,
+  ArrowPathIcon
 } from '@heroicons/react/16/solid';
 import {
   aiAssistantStorage,
@@ -25,16 +26,18 @@ import {
 import React from 'react';
 import Separator from './components/Separator';
 import Accordion from './components/Accordion';
+import Toggle from './components/Toggle';
+import AccesibilityCard from './components/AccesibilityCard';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
 // import { ComponentPropsWithoutRef } from 'react';
 
-type StateProps = {
+export type StateProps = {
   label: string;
   value: string;
 };
 
-type AccesibilityCardProps = {
+export type AccesibilityCardProps = {
   title: string;
   desc: string;
   icon: JSX.Element;
@@ -357,6 +360,18 @@ const SidePanel = () => {
     },
   ];
 
+  const resetState = async () => {
+    await contrastStorage.set("normal")
+    await textSpacingStorage.set("normal")
+    await dyslexicFontStorage.set("default")
+    await fontSizeStorage.set("normal")
+    await hideImagesStorage.set("disabled")
+    await saturationStorage.set("normal")
+    await soundNavigationStorage.set("disabled")
+    await focusReadStorage.set("disabled")
+    await aiAssistantStorage.set("disabled")
+  }
+
   return (
     <div>
       <div className="bg-blue-900 text-white p-2">
@@ -407,12 +422,18 @@ const SidePanel = () => {
           </Accordion>
         </div>
         <Separator />
-        <div className="flex items-center justify-between gap-1 w-full col-span-2">
+        <div className='col-span-2 grid grid-cols-5 justify-between'>
+
+        <div className="flex items-center justify-between gap-1 w-full col-span-4">
           <div className="flex items-center gap-2">
             <RectangleGroupIcon className="h-6 w-6 p-1" />
             <p className="font-semibold text-base">{smallDisplay ? 'Display Kecil' : 'Display Lebar'}</p>
           </div>
           <Toggle initialState={smallDisplay} onToggle={setSmallDisplay} />
+        </div>
+        <button className='p-1 flex items-center justify-center rounded border h-10 w-10 ml-auto' onClick={resetState}>
+          <ArrowPathIcon className='h-6 w-6' />
+        </button>
         </div>
         <Separator />
         <div className={`grid gap-4 ${smallDisplay ? 'grid-cols-3' : 'grid-cols-2'} col-span-2`}>
@@ -435,87 +456,6 @@ const SidePanel = () => {
   );
 };
 
-const AccesibilityCard = ({
-  desc,
-  icon,
-  title,
-  onClick,
-  currentState,
-  normalState,
-  state,
-  smallDisplay,
-}: AccesibilityCardProps) => {
-  const findLabel = (state: StateProps[]) => {
-    let label = '';
-    state.forEach(s => {
-      if (s.value === currentState) {
-        label = s.label;
-      }
-    });
-    return label;
-  };
-  return (
-    <button
-      onClick={onClick}
-      className={`hover:border-[2px] hover:border-blue-600 border-[2px] border-gray-100 text-start cursor-pointer col-span-1  w-full shadow px-4 pt-4 pb-2 rounded-md flex flex-col gap-2 ${smallDisplay ? 'items-center' : ''}`}>
-      {state ? (
-        <div className="flex items-center w-full gap-1">
-          {state.map(s => (
-            <>
-              <div
-                key={s.value}
-                className={`h-1 w-full rounded-full ${s.value === currentState ? 'bg-blue-600' : 'bg-gray-500'}`}></div>
-            </>
-          ))}
-        </div>
-      ) : (
-        <div className="h-1 w-full rounded-full bg-blue-600"></div>
-      )}
-      <span className={`text-blue-700 ${smallDisplay ? 'mt-1' : ''}`}>{icon}</span>
-      <div className={`${smallDisplay ? 'text-center !text-sm' : 'text-start'}`}>
-        {normalState ? (
-          <h2 className={`font-medium text-blue-900 ${smallDisplay ? 'text-sm' : 'text-base'}`}>{findLabel(state!)}</h2>
-        ) : (
-          <h2 className={`font-medium text-blue-900 ${smallDisplay ? 'text-sm' : 'text-base'}`}>{title}</h2>
-        )}
-      </div>
-      {smallDisplay ? null : <p className="text-xs text-blue-950">{desc}</p>}
-    </button>
-  );
-};
-
-interface ToggleProps {
-  initialState?: boolean;
-  onToggle?: (isOn: boolean) => void;
-}
-
-const Toggle: React.FC<ToggleProps> = ({ initialState = false, onToggle }) => {
-  const [isOn, setIsOn] = React.useState(initialState);
-
-  const handleToggle = () => {
-    const newState = !isOn;
-    setIsOn(newState);
-    if (onToggle) {
-      onToggle(newState);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleToggle}
-      className={`
-        w-14 h-7 flex items-center rounded-full p-1 cursor-pointer
-        ${isOn ? 'bg-blue-600 justify-end' : 'bg-gray-300 justify-start'}
-      `}>
-      <div
-        className={`
-        bg-white w-5 h-5 rounded-full shadow-md transform duration-300 ease-in-out
-       
-      `}
-      />
-    </button>
-  );
-};
 
 // const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
 //   const theme = useStorageSuspense(exampleThemeStorage);
