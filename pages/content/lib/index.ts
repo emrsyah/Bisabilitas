@@ -7,10 +7,15 @@ import { applyDyslexicFont } from './changeDyslexic';
 import { applyTextSize } from './changeFontSize';
 import { applyFocusRead } from './focusRead';
 import { applySoundNavigation } from './soundNavigation';
+import { toggleHighlightLink } from './highlightLink';
+import { toggleBigCursor } from './toggleBigCursor';
 // import {toggleAiAssistant} from './AiAssistant'
 
 console.log('content script loaded');
 
+
+void toggleBigCursor()
+void toggleHighlightLink()
 void toggleTheme();
 void toggleContrast()
 void hideImages()

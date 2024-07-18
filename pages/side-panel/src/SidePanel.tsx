@@ -10,7 +10,9 @@ import {
   PhotoIcon,
   ArrowsPointingOutIcon,
   BeakerIcon,
-  ArrowPathIcon
+  ArrowPathIcon,
+  LightBulbIcon,
+  CursorArrowRaysIcon
 } from '@heroicons/react/16/solid';
 import {
   aiAssistantStorage,
@@ -22,6 +24,8 @@ import {
   hideImagesStorage,
   saturationStorage,
   textSpacingStorage,
+  linkHighlightStorage,
+  cursorBiggerStorage,
 } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 import Separator from './components/Separator';
@@ -86,6 +90,14 @@ const activateSoundNavigation = async () => {
   await soundNavigationStorage.toggle();
 };
 
+const toggleHighlightLink = async () => {
+  await linkHighlightStorage.toggle()
+}
+
+const toggleBiggerCursor = async () => {
+  await cursorBiggerStorage.toggle()
+}
+
 type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic';
 
 type AccesibilityProfileProps = {
@@ -148,6 +160,8 @@ const SidePanel = () => {
   const [soundNavigation, setSoundNavigation] = React.useState(soundNavigationStorage.getSnapshot());
   const [focusRead, setFocusRead] = React.useState(focusReadStorage.getSnapshot());
   const [aiAssistant, setAiAssistant] = React.useState(aiAssistantStorage.getSnapshot());
+  const [highlightLink, setHighlightLink] = React.useState(linkHighlightStorage.getSnapshot());
+  const [biggerCursor, setBiggerCursor] = React.useState(cursorBiggerStorage.getSnapshot());
   const [smallDisplay, setSmallDisplay] = React.useState(false);
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
 
@@ -178,6 +192,12 @@ const SidePanel = () => {
     });
     aiAssistantStorage.subscribe(() => {
       setAiAssistant(aiAssistantStorage.getSnapshot());
+    });
+    linkHighlightStorage.subscribe(() => {
+      setHighlightLink(linkHighlightStorage.getSnapshot());
+    });
+    cursorBiggerStorage.subscribe(() => {
+      setBiggerCursor(cursorBiggerStorage.getSnapshot());
     });
     // console.log("testo")
   }, []);
@@ -358,6 +378,37 @@ const SidePanel = () => {
         },
       ],
     },
+    {
+      title: "Sorot Link",
+      desc: "Sorot link yang ada di website agar menjadi lebih jelas",
+      icon: <LightBulbIcon className='h-6 w-6' />,
+      normalState:'disabled',
+      onClick: toggleHighlightLink,
+      state: [{
+        label: "Sorot Link",
+        value: "disabled"
+      }, {
+        label: "Matikan Sorot Link",
+        value: "enabled"
+      }],
+      currentState: highlightLink ?? "disabled"
+    },
+    {
+      title: "Cursor Besar",
+      desc: "Perbesar cursor yang kamu gunakan agar lebih mudah dalam melakukan navigasi",
+      // icon: < className='h-6 w-6' />,
+      icon: <CursorArrowRaysIcon className='h-6 w-6' />,
+      normalState:'disabled',
+      onClick: toggleBiggerCursor,
+      state: [{
+        label: "Perbesar Cursor",
+        value: "disabled"
+      }, {
+        label: "Kembalikan Cursor",
+        value: "enabled"
+      }],
+      currentState: biggerCursor ?? "disabled"
+    }
   ];
 
   const resetState = async () => {

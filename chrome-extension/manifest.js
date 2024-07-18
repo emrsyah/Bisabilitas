@@ -33,7 +33,7 @@ const manifest = Object.assign(
       type: 'module',
     },
     action: {
-      default_popup: 'popup/index.html',
+      default_popup: 'side-panel/index.html',
       default_icon: 'bisabilitas-logo-32.png',
     },
     // chrome_url_overrides: {

@@ -9,5 +9,8 @@ import {dyslexicFontStorage} from'./dyslexicFontStorage'
 import {focusReadStorage} from './focusReadStorage'
 import {soundNavigationStorage} from './soundNavigationStorage'
 import {aiAssistantStorage} from './AiStorage'
+import {linkHighlightStorage} from './linkHighlightStorage'
+import {readingProgressStorage} from './readingProgressStorage'
+import {cursorBiggerStorage} from './cursorStorage'
 
-export {aiAssistantStorage, soundNavigationStorage, focusReadStorage, dyslexicFontStorage,textSpacingStorage, saturationStorage, hideImagesStorage, contrastStorage, exampleThemeStorage, fontSizeStorage, createStorage, StorageType, SessionAccessLevel, BaseStorage };
+export {linkHighlightStorage, readingProgressStorage, cursorBiggerStorage, aiAssistantStorage, soundNavigationStorage, focusReadStorage, dyslexicFontStorage,textSpacingStorage, saturationStorage, hideImagesStorage, contrastStorage, exampleThemeStorage, fontSizeStorage, createStorage, StorageType, SessionAccessLevel, BaseStorage };
