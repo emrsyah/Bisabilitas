@@ -14,7 +14,6 @@ import {
   LightBulbIcon,
   CursorArrowRaysIcon,
   ChevronLeftIcon,
-  PaperAirplaneIcon,
 } from '@heroicons/react/16/solid';
 import {
   aiAssistantStorage,
@@ -34,6 +33,7 @@ import Separator from './components/Separator';
 import Accordion from './components/Accordion';
 import Toggle from './components/Toggle';
 import AccesibilityCard from './components/AccesibilityCard';
+import AiChat from './AiChat';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
 // import { ComponentPropsWithoutRef } from 'react';
@@ -152,8 +152,6 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
   },
 ];
 
-const apiKey = import.meta.env.VITE_APP_MISTRAL_KEY
-
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot());
   const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot());
@@ -173,7 +171,6 @@ const SidePanel = () => {
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
 
   React.useEffect(() => {
-    console.log("apikey",apiKey)
     contrastStorage.subscribe(() => {
       setContrast(contrastStorage.getSnapshot());
     });
@@ -439,7 +436,7 @@ const SidePanel = () => {
 
   React.useEffect(() => {
     // console.log(import.meta.env.REACT_APP_MISTRAL_KEY)
-  },[])
+  }, []);
 
   return (
     <div>
@@ -454,16 +451,7 @@ const SidePanel = () => {
             <h1 className="font-medium text-base">Tanyakan AI Tentang Website Ini</h1>
           </nav>
           <Separator />
-          <div className='flex-grow flex-1 flex flex-col gap-2'>
-            <div className='flex-grow bg-gray-100 rounded'>
-            </div>
-            <div className='flex items-center gap-2'>
-              <input type="text" className='w-full focus:border-blue-600 outline-none p-2 border-[1.5px] border-gray-300 rounded' placeholder='Tanyakan Sesuatu' />
-              <button className='h-9 w-9 bg-blue-600 text-white p-1 rounded'>
-                <PaperAirplaneIcon />
-              </button>
-            </div>
-          </div>
+          <AiChat />
         </main>
       ) : (
         <>
@@ -476,8 +464,8 @@ const SidePanel = () => {
             </nav>
           </div>
           <main className="grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6">
-            <button
-              // onClick={() => aiAssistantStorage.toggle()}
+            {/* Hilangin AI dulu */}
+            {/* <button
               onClick={() => setAimode(true)}
               className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == 'enabled' ? 'bg-blue-600 text-white' : ' bg-white text-blue-600'} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
               <BoltIcon className="h-6 w-6" />
@@ -485,7 +473,7 @@ const SidePanel = () => {
                 AI Assistant <span className="text-sm">(beta)</span>
               </h1>
             </button>
-            <Separator />
+            <Separator /> */}
             <div className="col-span-2">
               <Accordion title="Profil Aksesibilitas">
                 <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
