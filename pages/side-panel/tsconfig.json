@@ -2,6 +2,8 @@
   "extends": "@chrome-extension-boilerplate/tsconfig/base",
   "compilerOptions": {
     "baseUrl": ".",
+    "target": "esnext",
+    "module": "esnext",
     "paths": {
       "@src/*": ["src/*"]
     },

@@ -21,6 +21,7 @@ const AccesibilityCard = ({
     };
     return (
       <button
+      key={title}
         onClick={onClick}
         className={`hover:border-[2px] hover:border-blue-600 border-[2px] border-gray-100 text-start cursor-pointer col-span-1  w-full shadow px-4 pt-4 pb-2 rounded-md flex flex-col gap-2 ${smallDisplay ? 'items-center' : ''}`}>
         {state ? (

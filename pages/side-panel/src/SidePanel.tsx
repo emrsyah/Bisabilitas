@@ -152,6 +152,8 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
   },
 ];
 
+const apiKey = import.meta.env.VITE_APP_MISTRAL_KEY
+
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot());
   const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot());
@@ -171,6 +173,7 @@ const SidePanel = () => {
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
 
   React.useEffect(() => {
+    console.log("apikey",apiKey)
     contrastStorage.subscribe(() => {
       setContrast(contrastStorage.getSnapshot());
     });
@@ -433,6 +436,10 @@ const SidePanel = () => {
     await focusReadStorage.set('disabled');
     await aiAssistantStorage.set('disabled');
   };
+
+  React.useEffect(() => {
+    // console.log(import.meta.env.REACT_APP_MISTRAL_KEY)
+  },[])
 
   return (
     <div>
