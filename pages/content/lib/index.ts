@@ -10,6 +10,7 @@ import { applySoundNavigation } from './soundNavigation';
 import { toggleHighlightLink } from './highlightLink';
 import { toggleBigCursor } from './toggleBigCursor';
 // import {toggleAiAssistant} from './AiAssistant'
+  
 
 console.log('content script loaded');
 

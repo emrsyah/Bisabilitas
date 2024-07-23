@@ -12,7 +12,9 @@ import {
   BeakerIcon,
   ArrowPathIcon,
   LightBulbIcon,
-  CursorArrowRaysIcon
+  CursorArrowRaysIcon,
+  ChevronLeftIcon,
+  PaperAirplaneIcon,
 } from '@heroicons/react/16/solid';
 import {
   aiAssistantStorage,
@@ -91,12 +93,12 @@ const activateSoundNavigation = async () => {
 };
 
 const toggleHighlightLink = async () => {
-  await linkHighlightStorage.toggle()
-}
+  await linkHighlightStorage.toggle();
+};
 
 const toggleBiggerCursor = async () => {
-  await cursorBiggerStorage.toggle()
-}
+  await cursorBiggerStorage.toggle();
+};
 
 type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic';
 
@@ -162,6 +164,9 @@ const SidePanel = () => {
   const [aiAssistant, setAiAssistant] = React.useState(aiAssistantStorage.getSnapshot());
   const [highlightLink, setHighlightLink] = React.useState(linkHighlightStorage.getSnapshot());
   const [biggerCursor, setBiggerCursor] = React.useState(cursorBiggerStorage.getSnapshot());
+
+  const [aiMode, setAimode] = React.useState<boolean>(false);
+
   const [smallDisplay, setSmallDisplay] = React.useState(false);
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
 
@@ -379,149 +384,166 @@ const SidePanel = () => {
       ],
     },
     {
-      title: "Sorot Link",
-      desc: "Sorot link yang ada di website agar menjadi lebih jelas",
-      icon: <LightBulbIcon className='h-6 w-6' />,
-      normalState:'disabled',
+      title: 'Sorot Link',
+      desc: 'Sorot link yang ada di website agar menjadi lebih jelas',
+      icon: <LightBulbIcon className="h-6 w-6" />,
+      normalState: 'disabled',
       onClick: toggleHighlightLink,
-      state: [{
-        label: "Sorot Link",
-        value: "disabled"
-      }, {
-        label: "Matikan Sorot Link",
-        value: "enabled"
-      }],
-      currentState: highlightLink ?? "disabled"
+      state: [
+        {
+          label: 'Sorot Link',
+          value: 'disabled',
+        },
+        {
+          label: 'Matikan Sorot Link',
+          value: 'enabled',
+        },
+      ],
+      currentState: highlightLink ?? 'disabled',
     },
     {
-      title: "Cursor Besar",
-      desc: "Perbesar cursor yang kamu gunakan agar lebih mudah dalam melakukan navigasi",
+      title: 'Cursor Besar',
+      desc: 'Perbesar cursor yang kamu gunakan agar lebih mudah dalam melakukan navigasi',
       // icon: < className='h-6 w-6' />,
-      icon: <CursorArrowRaysIcon className='h-6 w-6' />,
-      normalState:'disabled',
+      icon: <CursorArrowRaysIcon className="h-6 w-6" />,
+      normalState: 'disabled',
       onClick: toggleBiggerCursor,
-      state: [{
-        label: "Perbesar Cursor",
-        value: "disabled"
-      }, {
-        label: "Kembalikan Cursor",
-        value: "enabled"
-      }],
-      currentState: biggerCursor ?? "disabled"
-    }
+      state: [
+        {
+          label: 'Perbesar Cursor',
+          value: 'disabled',
+        },
+        {
+          label: 'Kembalikan Cursor',
+          value: 'enabled',
+        },
+      ],
+      currentState: biggerCursor ?? 'disabled',
+    },
   ];
 
   const resetState = async () => {
-    await contrastStorage.set("normal")
-    await textSpacingStorage.set("normal")
-    await dyslexicFontStorage.set("default")
-    await fontSizeStorage.set("normal")
-    await hideImagesStorage.set("disabled")
-    await saturationStorage.set("normal")
-    await soundNavigationStorage.set("disabled")
-    await focusReadStorage.set("disabled")
-    await aiAssistantStorage.set("disabled")
-  }
+    await contrastStorage.set('normal');
+    await textSpacingStorage.set('normal');
+    await dyslexicFontStorage.set('default');
+    await fontSizeStorage.set('normal');
+    await hideImagesStorage.set('disabled');
+    await saturationStorage.set('normal');
+    await soundNavigationStorage.set('disabled');
+    await focusReadStorage.set('disabled');
+    await aiAssistantStorage.set('disabled');
+  };
 
   return (
     <div>
-      <div className="bg-blue-900 text-white p-2">
-        <nav className="mx-4 sm:mx-auto my-2 max-w-sm flex items-center justify-between">
-          <h1 className="font-semibold text-xl">Bisabilitas</h1>
-          <button className="w-8 text-black hover:bg-blue-100 h-8 rounded-md justify-center items-center flex bg-white ">
-            <h1 className=" font-bold ">ID</h1>
-          </button>
-        </nav>
-      </div>
-      <main className="grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6">
-        <button
-          onClick={() => aiAssistantStorage.toggle()}
-          className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == 'enabled' ? 'bg-blue-600 text-white' : ' bg-white text-blue-600'} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
-          <BoltIcon className="h-6 w-6" />
-          <h1 className="text-lg font-bold ">
-            AI Assistant <span className="text-sm">(beta)</span>
-          </h1>
-        </button>
-        <Separator />
-        <div className="col-span-2">
-          <Accordion title="Profil Aksesibilitas">
-            <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-              {accesibilityProfileDatas.map(a => (
-                <button
-                  key={a.name}
-                  onClick={() => {
-                    if(a.state == accesibilityProfile){
-                      setAccesibilityProfile(null)
-                      a.onTurnOff()
-                    } else {
-                      setAccesibilityProfile(a.state)
-                      if(accesibilityProfile != null){
-                        // Cari Yang Turn On dan kita matiin
-                        const currentProfile = accesibilityProfileDatas.find((ac) => ac.state == accesibilityProfile)
-                        currentProfile?.onTurnOff()
-                      }
-                      // Nyalain yang sekarang
-                      a.onTurnOn()
-                    }
-                  }}
-                  className={`w-full cursor-pointer rounded text-start font-medium px-4 py-2 text-sm text-gray-700   ${a.state == accesibilityProfile ? "bg-blue-600 text-white" : "hover:bg-blue-100 hover:text-blue-900"}`}
-                  role="menuitem">
-                  {a.name}
-                </button>
+      {aiMode ? (
+        <main className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col">
+          <nav className="flex items-center gap-2">
+            <button
+              onClick={() => setAimode(false)}
+              className="rounded-md border-[2px] border-gray-100 p-2 flex items-center gap-1">
+              <ChevronLeftIcon className="h-6 w-6" />
+            </button>
+            <h1 className="font-medium text-base">Tanyakan AI Tentang Website Ini</h1>
+          </nav>
+          <Separator />
+          <div className='flex-grow flex-1 flex flex-col gap-2'>
+            <div className='flex-grow bg-gray-100 rounded'>
+            </div>
+            <div className='flex items-center gap-2'>
+              <input type="text" className='w-full focus:border-blue-600 outline-none p-2 border-[1.5px] border-gray-300 rounded' placeholder='Tanyakan Sesuatu' />
+              <button className='h-9 w-9 bg-blue-600 text-white p-1 rounded'>
+                <PaperAirplaneIcon />
+              </button>
+            </div>
+          </div>
+        </main>
+      ) : (
+        <>
+          <div className="bg-blue-900 text-white p-2">
+            <nav className="mx-4 sm:mx-auto my-2 max-w-sm flex items-center justify-between">
+              <h1 className="font-semibold text-xl">Bisabilitasx</h1>
+              <button className="w-8 text-black hover:bg-blue-100 h-8 rounded-md justify-center items-center flex bg-white ">
+                <h1 className=" font-bold ">ID</h1>
+              </button>
+            </nav>
+          </div>
+          <main className="grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6">
+            <button
+              // onClick={() => aiAssistantStorage.toggle()}
+              onClick={() => setAimode(true)}
+              className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == 'enabled' ? 'bg-blue-600 text-white' : ' bg-white text-blue-600'} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
+              <BoltIcon className="h-6 w-6" />
+              <h1 className="text-lg font-bold ">
+                AI Assistant <span className="text-sm">(beta)</span>
+              </h1>
+            </button>
+            <Separator />
+            <div className="col-span-2">
+              <Accordion title="Profil Aksesibilitas">
+                <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                  {accesibilityProfileDatas.map(a => (
+                    <button
+                      key={a.name}
+                      onClick={() => {
+                        if (a.state == accesibilityProfile) {
+                          setAccesibilityProfile(null);
+                          a.onTurnOff();
+                        } else {
+                          setAccesibilityProfile(a.state);
+                          if (accesibilityProfile != null) {
+                            // Cari Yang Turn On dan kita matiin
+                            const currentProfile = accesibilityProfileDatas.find(ac => ac.state == accesibilityProfile);
+                            currentProfile?.onTurnOff();
+                          }
+                          // Nyalain yang sekarang
+                          a.onTurnOn();
+                        }
+                      }}
+                      className={`w-full cursor-pointer rounded text-start font-medium px-4 py-2 text-sm text-gray-700   ${a.state == accesibilityProfile ? 'bg-blue-600 text-white' : 'hover:bg-blue-100 hover:text-blue-900'}`}
+                      role="menuitem">
+                      {a.name}
+                    </button>
+                  ))}
+                </div>
+              </Accordion>
+            </div>
+            <Separator />
+            <div className="col-span-2 grid grid-cols-5 justify-between">
+              <div className="flex items-center justify-between gap-1 w-full col-span-4">
+                <div className="flex items-center gap-2">
+                  <RectangleGroupIcon className="h-6 w-6 p-1" />
+                  <p className="font-semibold text-base">{smallDisplay ? 'Display Kecil' : 'Display Lebar'}</p>
+                </div>
+                <Toggle initialState={smallDisplay} onToggle={setSmallDisplay} />
+              </div>
+              <button
+                className="p-1 flex items-center justify-center rounded border h-10 w-10 ml-auto"
+                onClick={resetState}>
+                <ArrowPathIcon className="h-6 w-6" />
+              </button>
+            </div>
+            <Separator />
+            <div className={`grid gap-4 ${smallDisplay ? 'grid-cols-3' : 'grid-cols-2'} col-span-2`}>
+              {accesibilityData.map(d => (
+                <AccesibilityCard
+                  smallDisplay={smallDisplay}
+                  key={d.title}
+                  desc={d.desc}
+                  title={d.title}
+                  icon={d.icon}
+                  onClick={d.onClick}
+                  state={d.state}
+                  currentState={d.currentState}
+                  normalState={d.normalState}
+                />
               ))}
             </div>
-          </Accordion>
-        </div>
-        <Separator />
-        <div className='col-span-2 grid grid-cols-5 justify-between'>
-
-        <div className="flex items-center justify-between gap-1 w-full col-span-4">
-          <div className="flex items-center gap-2">
-            <RectangleGroupIcon className="h-6 w-6 p-1" />
-            <p className="font-semibold text-base">{smallDisplay ? 'Display Kecil' : 'Display Lebar'}</p>
-          </div>
-          <Toggle initialState={smallDisplay} onToggle={setSmallDisplay} />
-        </div>
-        <button className='p-1 flex items-center justify-center rounded border h-10 w-10 ml-auto' onClick={resetState}>
-          <ArrowPathIcon className='h-6 w-6' />
-        </button>
-        </div>
-        <Separator />
-        <div className={`grid gap-4 ${smallDisplay ? 'grid-cols-3' : 'grid-cols-2'} col-span-2`}>
-          {accesibilityData.map(d => (
-            <AccesibilityCard
-              smallDisplay={smallDisplay}
-              key={d.title}
-              desc={d.desc}
-              title={d.title}
-              icon={d.icon}
-              onClick={d.onClick}
-              state={d.state}
-              currentState={d.currentState}
-              normalState={d.normalState}
-            />
-          ))}
-        </div>
-      </main>
+          </main>
+        </>
+      )}
     </div>
   );
 };
-
-
-// const ToggleButton = (props: ComponentPropsWithoutRef<'button'>) => {
-//   const theme = useStorageSuspense(exampleThemeStorage);
-//   return (
-//     <button
-//       className={
-//         props.className +
-//         ' ' +
-//         'font-bold mt-4 py-1 px-4 rounded shadow hover:scale-105 ' +
-//         (theme === 'light' ? 'bg-white text-black' : 'bg-black text-white')
-//       }
-//       onClick={exampleThemeStorage.toggle}>
-//       {props.children}
-//     </button>
-//   );
-// };
 
 export default withErrorBoundary(withSuspense(SidePanel, <div> Loading ... </div>), <div> Error Occur </div>);
