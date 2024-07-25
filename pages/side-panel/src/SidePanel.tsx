@@ -1,7 +1,6 @@
 import { withErrorBoundary, withSuspense } from '@chrome-extension-boilerplate/shared';
 import {
   RectangleGroupIcon,
-  BoltIcon,
   EyeIcon,
   ComputerDesktopIcon,
   SpeakerWaveIcon,
