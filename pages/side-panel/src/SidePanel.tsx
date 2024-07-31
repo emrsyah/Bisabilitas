@@ -13,6 +13,7 @@ import {
   LightBulbIcon,
   CursorArrowRaysIcon,
   ChevronLeftIcon,
+  BoltIcon,
 } from '@heroicons/react/16/solid';
 import {
   aiAssistantStorage,
@@ -33,6 +34,7 @@ import Accordion from './components/Accordion';
 import Toggle from './components/Toggle';
 import AccesibilityCard from './components/AccesibilityCard';
 import AiChat from './AiChat';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
 // import { ComponentPropsWithoutRef } from 'react';
@@ -437,6 +439,8 @@ const SidePanel = () => {
     // console.log(import.meta.env.REACT_APP_MISTRAL_KEY)
   }, []);
 
+  const queryClient = new QueryClient()
+
   return (
     <div>
       {aiMode ? (
@@ -450,7 +454,9 @@ const SidePanel = () => {
             <h1 className="font-medium text-base">Tanyakan AI Tentang Website Ini</h1>
           </nav>
           <Separator />
+          <QueryClientProvider client={queryClient}>
           <AiChat />
+          </QueryClientProvider>
         </main>
       ) : (
         <>
@@ -464,7 +470,7 @@ const SidePanel = () => {
           </div>
           <main className="grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6">
             {/* Hilangin AI dulu */}
-            {/* <button
+            <button
               onClick={() => setAimode(true)}
               className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == 'enabled' ? 'bg-blue-600 text-white' : ' bg-white text-blue-600'} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
               <BoltIcon className="h-6 w-6" />
@@ -472,7 +478,7 @@ const SidePanel = () => {
                 AI Assistant <span className="text-sm">(beta)</span>
               </h1>
             </button>
-            <Separator /> */}
+            <Separator />
             <div className="col-span-2">
               <Accordion title="Profil Aksesibilitas">
                 <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">

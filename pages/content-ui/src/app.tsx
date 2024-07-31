@@ -388,11 +388,7 @@ export default function App() {
                     className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-blue-600 relative">
                     <CircularProgress currentState={item.state!.findIndex((c) => c.value == item.currentState) + 1} totalStates={item.state!.length} />
                     <div className="z-10 text-white">{item.icon}</div>
-                  </button> // <div
-                  //   key={c.title}
-                  //   className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-blue-600">
-                  //   {c.icon}
-                  // </div>
+                  </button>
                 ))}
               </div>
             </div>
