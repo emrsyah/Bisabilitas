@@ -23,15 +23,25 @@ styleElement.innerHTML = tailwindcssOutput;
 shadowRoot.appendChild(styleElement);
 
 
-// to receive messages from popup script
 chrome.runtime.onMessage.addListener((message) => {
   (async () => {
-    console.log(message)
+    console.log(message);
     if (message.action === 'searchText') {
-      $(window).scrollTop($("*:contains('" + message.text + "'):last").offset().top);
+      const targetElement = $("*:contains('" + message.text + "'):last");
+      if (targetElement.length > 0) {
+        const offset = targetElement.offset();
+        if (offset) {
+          $(window).scrollTop(offset.top);
+        } else {
+          console.warn("Offset not found for the target element.");
+        }
+      } else {
+        console.warn("Text not found on the page:", message.text);
+      }
     }
   })();
 });
+
 
 createRoot(rootIntoShadow).render(
   <>

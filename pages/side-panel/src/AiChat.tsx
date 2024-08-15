@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { PaperAirplaneIcon } from '@heroicons/react/16/solid';
+import { ArrowPathIcon, PaperAirplaneIcon } from '@heroicons/react/16/solid';
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -103,9 +103,9 @@ const AiChat: React.FC = () => {
     <div className="flex-grow flex-1 flex flex-col gap-2">
       <div className="text-sm flex gap-2 items-center bg-blue-100 p-2 rounded">
         <img src={currentImg} alt={currentTitle} className='h-6 w-6 rounded' />
-        <div className='flex flex-col'>
-          <h1 className='font-semibold'>{currentTitle ?? "Not Found"}</h1>
-          <p className='text-xs'>{currentUrl ?? "Not Found Url"}</p>
+        <div className='flex flex-col overflow-auto'>
+          <h1 className='font-semibold line-clamp-1'>{currentTitle ?? "Not Found"}</h1>
+          <p className='text-xs line-clamp-1'>{currentUrl ?? "Not Found Url"}</p>
         </div>
       </div>
       <div className="flex-grow bg-gray-100 rounded p-4 overflow-y-auto">
@@ -115,9 +115,9 @@ const AiChat: React.FC = () => {
               {msg.content}
             </span>
             {msg.role == "ai" ? (
-              <div className='flex flex-col text-xs gap-[1.5px] font-medium mt-[2px] justify-start items-start text-start'>
+              <div className='flex flex-col text-xs gap-[2px] font-medium mt-[2px] justify-start items-start text-start'>
                 {msg.evidence.length > 0 && msg.evidence.map((ev, idx) => (
-                  <button className='text-start' onClick={() => handleEvidenceClick(ev)} key={idx}>🔍 {ev}</button>
+                  <button className='text-start p-[2px] rounded hover:bg-blue-200' onClick={() => handleEvidenceClick(ev)} key={idx}>🔍 {ev}</button>
                 ))}
               </div>
             ) : null}
@@ -135,10 +135,14 @@ const AiChat: React.FC = () => {
         />
         <button 
           type="submit" 
-          className="h-9 w-9 bg-blue-600 text-white p-1 rounded"
+          className={`h-9 w-9 text-white p-1 rounded ${aiMutation.isPending ? "bg-gray-700" : "bg-blue-600"} `}
           disabled={aiMutation.isPending}
         >
+          {aiMutation.isPending ? (
+            <ArrowPathIcon className='animate-spin' />
+          ) : (
           <PaperAirplaneIcon />
+          )}
         </button>
       </form>
     </div>
