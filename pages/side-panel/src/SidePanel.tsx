@@ -14,6 +14,7 @@ import {
   CursorArrowRaysIcon,
   ChevronLeftIcon,
   BoltIcon,
+  Bars3BottomLeftIcon,
 } from '@heroicons/react/16/solid';
 import {
   aiAssistantStorage,
@@ -27,6 +28,7 @@ import {
   textSpacingStorage,
   linkHighlightStorage,
   cursorBiggerStorage,
+  textAlignmentStorage,
 } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 import Separator from './components/Separator';
@@ -101,6 +103,10 @@ const toggleBiggerCursor = async () => {
   await cursorBiggerStorage.toggle();
 };
 
+const toggleTextAlignment = async () => {
+  await textAlignmentStorage.toggle();
+};
+
 type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic';
 
 type AccesibilityProfileProps = {
@@ -165,6 +171,7 @@ const SidePanel = () => {
   const [aiAssistant, setAiAssistant] = React.useState(aiAssistantStorage.getSnapshot());
   const [highlightLink, setHighlightLink] = React.useState(linkHighlightStorage.getSnapshot());
   const [biggerCursor, setBiggerCursor] = React.useState(cursorBiggerStorage.getSnapshot());
+  const [textAlignment, setTextAlignment] = React.useState(textAlignmentStorage.getSnapshot())
 
   const [aiMode, setAimode] = React.useState<boolean>(false);
 
@@ -172,6 +179,9 @@ const SidePanel = () => {
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
 
   React.useEffect(() => {
+    textAlignmentStorage.subscribe(() => {
+      setTextAlignment(textAlignmentStorage.getSnapshot());
+    })
     contrastStorage.subscribe(() => {
       setContrast(contrastStorage.getSnapshot());
     });
@@ -421,6 +431,33 @@ const SidePanel = () => {
       ],
       currentState: biggerCursor ?? 'disabled',
     },
+    {
+      title: 'Arah Teks',
+      desc: 'Ubah arah teks sesuai preferensi dan cara baca anda',
+      // icon: < className='h-6 w-6' />,
+      icon: <Bars3BottomLeftIcon className="h-6 w-6" />,
+      normalState: 'normal',
+      onClick: toggleTextAlignment,
+      state: [
+        {
+          label: 'Teks Rata Normal',
+          value: 'normal',
+        },
+        {
+          label: 'Teks Rata Kiri',
+          value: 'left',
+        },
+        {
+          label: 'Teks Rata Kanan',
+          value: 'right',
+        },
+        {
+          label: 'Teks Rata Selaras',
+          value: 'justify',
+        },
+      ],
+      currentState: textAlignment ?? 'normal',
+    },
   ];
 
   const resetState = async () => {
@@ -462,7 +499,7 @@ const SidePanel = () => {
         <>
           <div className="bg-blue-900 text-white p-2">
             <nav className="mx-4 sm:mx-auto my-2 max-w-sm flex items-center justify-between">
-              <h1 className="font-semibold text-xl">Bisabilitasx</h1>
+              <h1 className="font-semibold text-xl">Bisabilitas - X</h1>
               <button className="w-8 text-black hover:bg-blue-100 h-8 rounded-md justify-center items-center flex bg-white ">
                 <h1 className=" font-bold ">ID</h1>
               </button>

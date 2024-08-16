@@ -12,5 +12,7 @@ import {aiAssistantStorage} from './AiStorage'
 import {linkHighlightStorage} from './linkHighlightStorage'
 import {readingProgressStorage} from './readingProgressStorage'
 import {cursorBiggerStorage} from './cursorStorage'
+import {audioEnhancementStorage} from './audioEnhancementStorage'
+import {textAlignmentStorage} from './textAlignmentStorage'
 
-export {linkHighlightStorage, readingProgressStorage, cursorBiggerStorage, aiAssistantStorage, soundNavigationStorage, focusReadStorage, dyslexicFontStorage,textSpacingStorage, saturationStorage, hideImagesStorage, contrastStorage, exampleThemeStorage, fontSizeStorage, createStorage, StorageType, SessionAccessLevel, BaseStorage };
+export {textAlignmentStorage, audioEnhancementStorage, linkHighlightStorage, readingProgressStorage, cursorBiggerStorage, aiAssistantStorage, soundNavigationStorage, focusReadStorage, dyslexicFontStorage,textSpacingStorage, saturationStorage, hideImagesStorage, contrastStorage, exampleThemeStorage, fontSizeStorage, createStorage, StorageType, SessionAccessLevel, BaseStorage };

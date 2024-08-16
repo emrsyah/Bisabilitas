@@ -9,12 +9,13 @@ import { applyFocusRead } from './focusRead';
 import { applySoundNavigation } from './soundNavigation';
 import { toggleHighlightLink } from './highlightLink';
 import { toggleBigCursor } from './toggleBigCursor';
+import { applyTextAlignment } from './toggleTextAlignment'
 // import {toggleAiAssistant} from './AiAssistant'
   
 
 console.log('content script loaded');
 
-
+void applyTextAlignment()
 void toggleBigCursor()
 void toggleHighlightLink()
 void toggleTheme();
