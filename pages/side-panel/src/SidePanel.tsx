@@ -455,6 +455,10 @@ const SidePanel = () => {
           label: 'Teks Rata Selaras',
           value: 'justify',
         },
+        {
+          label: 'Teks Rata Tengah',
+          value: 'center',
+        },
       ],
       currentState: textAlignment ?? 'normal',
     },

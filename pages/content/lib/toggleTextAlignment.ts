@@ -1,7 +1,7 @@
 import { textAlignmentStorage } from '@chrome-extension-boilerplate/storage';
 
 export async function applyTextAlignment() {
-  function setTextAlignment(alignment: "normal" | "left" | "right" | "justify") {
+  function setTextAlignment(alignment: "normal" | "left" | "right" | "justify" | "center") {
     const bodyElement = document.body;
     const allElements = document.getElementsByTagName('*');
 
@@ -17,6 +17,9 @@ export async function applyTextAlignment() {
         break;
       case 'justify':
         applyAlignment(bodyElement, allElements, 'justify');
+        break;
+      case 'center':
+        applyAlignment(bodyElement, allElements, 'center');
         break;
     }
   }

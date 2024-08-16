@@ -1,6 +1,6 @@
 import { BaseStorage, createStorage, StorageType } from './base';
 
-type TextAlignmentState = 'normal' | 'left' | 'right' | 'justify';
+type TextAlignmentState = 'normal' | 'left' | 'right' | 'justify' | 'center';
 
 type TextAlignmentStorage = BaseStorage<TextAlignmentState> & {
   toggle: () => Promise<void>;
@@ -15,7 +15,7 @@ export const textAlignmentStorage: TextAlignmentStorage = {
   ...storage,
   toggle: async () => {
     await storage.set(currentState => {
-      const states: TextAlignmentState[] = ['normal', 'left', 'right', 'justify'];
+      const states: TextAlignmentState[] = ['normal', 'left', 'right', 'justify', 'center'];
       const currentIndex = states.indexOf(currentState);
       const nextIndex = (currentIndex + 1) % states.length;
       return states[nextIndex];
