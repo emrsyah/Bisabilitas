@@ -15,6 +15,7 @@ import {
   ChevronLeftIcon,
   BoltIcon,
   Bars3BottomLeftIcon,
+  UserIcon,
 } from '@heroicons/react/16/solid';
 import {
   aiAssistantStorage,
@@ -29,6 +30,7 @@ import {
   linkHighlightStorage,
   cursorBiggerStorage,
   textAlignmentStorage,
+  tokenAuthStorage,
 } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 import Separator from './components/Separator';
@@ -159,6 +161,18 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
   },
 ];
 
+type LoginFormType = {
+  email: string;
+  password: string;
+};
+
+type RegisterFormType = {
+  email: string;
+  name: string;
+  password: string;
+  password_confirmation: string;
+};
+
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot());
   const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot());
@@ -171,9 +185,20 @@ const SidePanel = () => {
   const [aiAssistant, setAiAssistant] = React.useState(aiAssistantStorage.getSnapshot());
   const [highlightLink, setHighlightLink] = React.useState(linkHighlightStorage.getSnapshot());
   const [biggerCursor, setBiggerCursor] = React.useState(cursorBiggerStorage.getSnapshot());
-  const [textAlignment, setTextAlignment] = React.useState(textAlignmentStorage.getSnapshot())
+  const [textAlignment, setTextAlignment] = React.useState(textAlignmentStorage.getSnapshot());
+  const [userToken, setUserToken] = React.useState<string | null>(tokenAuthStorage.getSnapshot());
+  const [loginData, setLoginData] = React.useState<LoginFormType>({
+    email: '',
+    password: '',
+  });
+  const [registerData, setRegisterData] = React.useState<RegisterFormType>({
+    email: '',
+    name: '',
+    password: '',
+    password_confirmation: '',
+  });
 
-  const [aiMode, setAimode] = React.useState<boolean>(false);
+  const [mode, setMode] = React.useState<'ai' | 'default' | 'account' | 'login' | 'register'>('default');
 
   const [smallDisplay, setSmallDisplay] = React.useState(false);
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
@@ -181,7 +206,7 @@ const SidePanel = () => {
   React.useEffect(() => {
     textAlignmentStorage.subscribe(() => {
       setTextAlignment(textAlignmentStorage.getSnapshot());
-    })
+    });
     contrastStorage.subscribe(() => {
       setContrast(contrastStorage.getSnapshot());
     });
@@ -432,8 +457,8 @@ const SidePanel = () => {
       currentState: biggerCursor ?? 'disabled',
     },
     {
-      title: 'Arah Teks',
-      desc: 'Ubah arah teks sesuai preferensi dan cara baca anda',
+      title: 'Rata Teks',
+      desc: 'Ubah arah dan kerataan teks sesuai preferensi dan cara baca anda',
       // icon: < className='h-6 w-6' />,
       icon: <Bars3BottomLeftIcon className="h-6 w-6" />,
       normalState: 'normal',
@@ -477,18 +502,152 @@ const SidePanel = () => {
   };
 
   React.useEffect(() => {
-    // console.log(import.meta.env.REACT_APP_MISTRAL_KEY)
+    // console.log(import.meta.env)
   }, []);
 
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
+
+  const handleLogin = (ev: React.FormEvent<HTMLFormElement>) => {
+    ev.preventDefault();
+    console.log(loginData);
+  };
+
+  const handleRegister = (ev: React.FormEvent<HTMLFormElement>) => {
+    ev.preventDefault();
+    console.log(registerData);
+  };
+
+  if (mode === 'login')
+    return (
+      <form onSubmit={handleLogin} className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col">
+        <button
+          type="button"
+          className="mb-2 text-blue-600 underline text-base font-medium text-start"
+          onClick={() => setMode('default')}>
+          Kembali
+        </button>
+        <h1 className="text-2xl font-bold text-blue-600">Masuk Bisabilitas</h1>
+        <div className="mt-3"></div>
+        <div className="flex flex-col items-start gap-1">
+          <span className="text-lg font-medium">Email</span>
+          <input
+            value={loginData.email}
+            onChange={e => {
+              setLoginData(prev => ({ ...prev, email: e.target.value }));
+            }}
+            placeholder="nama@gmail.com"
+            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
+            type="email"
+          />
+        </div>
+        <div className="flex flex-col items-start gap-1">
+          <span className="text-lg font-medium">Kata Sandi</span>
+          <input
+            value={loginData.password}
+            onChange={e => {
+              setLoginData(prev => ({ ...prev, password: e.target.value }));
+            }}
+            placeholder="masukkan kata sandi anda"
+            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
+            type="password"
+          />
+        </div>
+        <button type="submit" className="text-base bg-blue-600 text-white rounded p-1 w-full font-medium mt-1">
+          Masuk Bisabilitas
+        </button>
+        <div className="mt-1"></div>
+        <Separator />
+        <span className="text-base font-medium text-gray-700 mt-1 flex items-center text-center">
+          Belum punya akun?{' '}
+          <button type="button" onClick={() => setMode('register')} className="text-blue-600 underline ml-1">
+            Daftar
+          </button>
+        </span>
+        {/* <button onClick={googleLogin}>Login Google</button> */}
+      </form>
+    );
+
+  if (mode === 'register')
+    return (
+      <form onSubmit={handleRegister} className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col">
+        <button
+          type="button"
+          className="mb-2 text-blue-600 underline text-base font-medium text-start"
+          onClick={() => setMode('default')}>
+          Kembali
+        </button>
+        <h1 className="text-2xl font-bold text-blue-600">Daftar Bisabilitas</h1>
+        <div className="mt-3"></div>
+        <div className="flex flex-col items-start gap-1">
+          <span className="text-lg font-medium">Email</span>
+          <input
+            value={registerData.email}
+            onChange={e => {
+              setRegisterData(prev => ({ ...prev, email: e.target.value }));
+            }}
+            placeholder="nama@gmail.com"
+            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
+            type="email"
+          />
+        </div>
+        <div className="flex flex-col items-start gap-1">
+          <span className="text-lg font-medium">Nama</span>
+          <input
+            value={registerData.name}
+            onChange={e => {
+              setRegisterData(prev => ({ ...prev, name: e.target.value }));
+            }}
+            placeholder="masukkan nama kamu"
+            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
+            type="email"
+          />
+        </div>
+        <div className="flex flex-col items-start gap-1">
+          <span className="text-lg font-medium">Kata Sandi</span>
+          <input
+            value={registerData.password}
+            onChange={e => {
+              setRegisterData(prev => ({ ...prev, password: e.target.value }));
+            }}
+            placeholder="masukkan kata sandi anda"
+            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
+            type="password"
+          />
+        </div>
+        <div className="flex flex-col items-start gap-1">
+          <span className="text-lg font-medium">Konfirmasi Kata Sandi</span>
+          <input
+            value={registerData.password_confirmation}
+            onChange={e => {
+              setRegisterData(prev => ({ ...prev, password_confirmation: e.target.value }));
+            }}
+            placeholder="konfirmasi kata sandi anda"
+            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
+            type="password"
+          />
+        </div>
+        <button type="submit" className="text-base bg-blue-600 text-white rounded p-1 w-full font-medium mt-1">
+          Daftar Bisabilitas
+        </button>
+        <div className="mt-1"></div>
+        <Separator />
+        <span className="text-base font-medium text-gray-700 mt-1 flex items-center text-center">
+          Sudah punya akun?{' '}
+          <button type="button" onClick={() => setMode('login')} className="text-blue-600 underline ml-1">
+            Masuk
+          </button>
+        </span>
+        {/* <button onClick={googleLogin}>Login Google</button> */}
+      </form>
+    );
 
   return (
     <div>
-      {aiMode ? (
+      {mode === 'ai' ? (
         <main className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col">
           <nav className="flex items-center gap-2">
             <button
-              onClick={() => setAimode(false)}
+              onClick={() => setMode('default')}
               className="rounded-md border-[2px] border-gray-100 p-2 flex items-center gap-1">
               <ChevronLeftIcon className="h-6 w-6" />
             </button>
@@ -496,7 +655,7 @@ const SidePanel = () => {
           </nav>
           <Separator />
           <QueryClientProvider client={queryClient}>
-          <AiChat />
+            <AiChat />
           </QueryClientProvider>
         </main>
       ) : (
@@ -504,15 +663,21 @@ const SidePanel = () => {
           <div className="bg-blue-900 text-white p-2">
             <nav className="mx-4 sm:mx-auto my-2 max-w-sm flex items-center justify-between">
               <h1 className="font-semibold text-xl">Bisabilitas - X</h1>
-              <button className="w-8 text-black hover:bg-blue-100 h-8 rounded-md justify-center items-center flex bg-white ">
-                <h1 className=" font-bold ">ID</h1>
+              {/* <h1>{env}</h1> */}
+              <button
+                onClick={() => {
+                  setMode(userToken !== null ? 'account' : 'login');
+                }}
+                className="w-8 text-black hover:bg-blue-100 h-8 rounded-md justify-center items-center flex bg-white ">
+                <UserIcon className="w-8 h-8" />
+                {/* <h1 className=" font-bold ">ID</h1> */}
               </button>
             </nav>
           </div>
           <main className="grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6">
             {/* Hilangin AI dulu */}
             <button
-              onClick={() => setAimode(true)}
+              onClick={() => setMode('ai')}
               className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == 'enabled' ? 'bg-blue-600 text-white' : ' bg-white text-blue-600'} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
               <BoltIcon className="h-6 w-6" />
               <h1 className="text-lg font-bold ">
