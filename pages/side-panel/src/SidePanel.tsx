@@ -174,6 +174,12 @@ type RegisterFormType = {
   password_confirmation: string;
 };
 
+type UserDataType = {
+  email: string;
+  name: string;
+  id: number;
+};
+
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot());
   const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot());
@@ -203,6 +209,8 @@ const SidePanel = () => {
 
   const [smallDisplay, setSmallDisplay] = React.useState(false);
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
+
+  const [userData, setUserData] = React.useState<UserDataType | null>(null);
 
   React.useEffect(() => {
     textAlignmentStorage.subscribe(() => {
@@ -240,6 +248,9 @@ const SidePanel = () => {
     });
     cursorBiggerStorage.subscribe(() => {
       setBiggerCursor(cursorBiggerStorage.getSnapshot());
+    });
+    tokenAuthStorage.subscribe(() => {
+      setUserToken(tokenAuthStorage.getSnapshot());
     });
     // console.log("testo")
   }, []);
@@ -503,22 +514,33 @@ const SidePanel = () => {
   };
 
   React.useEffect(() => {
-    if (userToken === null){
-      return
+    if (userToken === null) {
+      return;
     }
     const getUserData = async () => {
-      try{
-        const res = await axios.get(import.meta.env.VITE_APP_BACKEND_URL + "profile", {
+      try {
+        const res = await axios.get(import.meta.env.VITE_APP_BACKEND_URL + 'profile', {
           headers: {
             Authorization: `Bearer ${userToken}`,
           },
-        })
-        console.log("user data", res.data)
-      }catch(err){
-        console.log(err)
+        });
+        if (res.data.code != 200) {
+          alert(res.data.message);
+          setMode('login');
+          return;
+        }
+        const data = res.data.data;
+
+        setUserData({
+          email: data.email,
+          name: data.name,
+          id: data.id,
+        });
+      } catch (err) {
+        console.log(err);
       }
-    }
-    getUserData()
+    };
+    getUserData();
     // console.log(import.meta.env)
   }, [userToken]);
 
@@ -527,25 +549,29 @@ const SidePanel = () => {
   const handleLogin = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
     try {
-      const res = await axios.post(import.meta.env.VITE_APP_BACKEND_URL + "login", {
+      const res = await axios.post(import.meta.env.VITE_APP_BACKEND_URL + 'login', {
         email: loginData.email,
         password: loginData.password,
-      })
+      });
 
-      if (res.data.code != 200){
-        alert(res.data.message)
-        return
+      if (res.data.code != 200) {
+        alert(res.data.message);
+        return;
       }
 
-      const token = res.data.data.token
+      const token = res.data.data.token;
 
-      setUserToken(token)
-      await tokenAuthStorage.set(token)
+      setUserToken(token);
+      await tokenAuthStorage.set(token);
 
-      setMode('default')
+      setLoginData({
+        email: '',
+        password: '',
+      });
 
-    } catch(err){
-      console.log(err)
+      setMode('default');
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -556,39 +582,59 @@ const SidePanel = () => {
       return;
     }
     try {
-      const res = await axios.post(import.meta.env.VITE_APP_BACKEND_URL + "register", {
+      const res = await axios.post(import.meta.env.VITE_APP_BACKEND_URL + 'register', {
         email: registerData.email,
         password: registerData.password,
         password_confirmation: registerData.password_confirmation,
         name: registerData.name,
-      })
+      });
 
-      if (res.data.code != 200){
-        alert(res.data.message)
-        return
+      if (res.data.code != 200) {
+        alert(res.data.message);
+        return;
       }
 
-      const token = res.data.data.token
+      const token = res.data.data.token;
 
-      setUserToken(token)
-      await tokenAuthStorage.set(token)
+      setUserToken(token);
+      await tokenAuthStorage.set(token);
 
-      setMode('default')
+      setRegisterData({
+        email: '',
+        password: '',
+        password_confirmation: '',
+        name: '',
+      });
 
-    } catch(err){
-      console.log(err)
+      setMode('default');
+    } catch (err) {
+      console.log(err);
     }
   };
+
+  const handleLogout = async () => {
+    if (userToken === null) {
+      return;
+    }
+    setMode("default")
+    await tokenAuthStorage.set(null);
+    setUserToken(null)
+    setUserData(null);
+  }
+
+  const ButtonKembali = () => (
+    <button
+      type="button"
+      className="mb-2 text-blue-600 underline text-base font-medium text-start"
+      onClick={() => setMode('default')}>
+      Kembali
+    </button>
+  );
 
   if (mode === 'login')
     return (
       <form onSubmit={handleLogin} className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col">
-        <button
-          type="button"
-          className="mb-2 text-blue-600 underline text-base font-medium text-start"
-          onClick={() => setMode('default')}>
-          Kembali
-        </button>
+        <ButtonKembali />
         <h1 className="text-2xl font-bold text-blue-600">Masuk Bisabilitas</h1>
         <div className="mt-3"></div>
         <div className="flex flex-col items-start gap-1">
@@ -633,12 +679,8 @@ const SidePanel = () => {
   if (mode === 'register')
     return (
       <form onSubmit={handleRegister} className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col">
-        <button
-          type="button"
-          className="mb-2 text-blue-600 underline text-base font-medium text-start"
-          onClick={() => setMode('default')}>
-          Kembali
-        </button>
+        <ButtonKembali />
+
         <h1 className="text-2xl font-bold text-blue-600">Daftar Bisabilitas</h1>
         <div className="mt-3"></div>
         <div className="flex flex-col items-start gap-1">
@@ -704,16 +746,24 @@ const SidePanel = () => {
       </form>
     );
 
-  if (mode === "account") 
+  if (mode === 'account')
     return (
-      <div  className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col text-base">
-        <h1 className='font-semibold text-lg'>Pengaturan Akun Anda</h1>
-        <div className='flex items-center gap-2'>
-          <h5>Nama Anda</h5>
-          {/* <h5></h5> */}
+      <div className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col text-base">
+        <ButtonKembali />
+
+        <h1 className="font-semibold text-xl mt-3">Pengaturan Akun Anda</h1>
+        <div className="mt-2"></div>
+        <Separator />
+        <div className="flex flex-col gap-3 font-medium mt-2">
+          <h5>Nama: {userData?.name ?? '-'}</h5>
+          <h5>Email: {userData?.email ?? '-'}</h5>
         </div>
+        <div className="mt-3"></div>
+        <Separator />
+        <div className="mt-2"></div>
+        <button onClick={handleLogout} className='bg-red-500 text-white font-medium p-2 rounded w-full hover:bg-red-600'>Logout dari Bisabilitas</button>
       </div>
-  )
+    );
 
   return (
     <div>
