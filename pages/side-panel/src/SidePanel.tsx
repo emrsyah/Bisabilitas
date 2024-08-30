@@ -39,6 +39,7 @@ import Toggle from './components/Toggle';
 import AccesibilityCard from './components/AccesibilityCard';
 import AiChat from './AiChat';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import axios from 'axios';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
 // import { ComponentPropsWithoutRef } from 'react';
@@ -502,19 +503,81 @@ const SidePanel = () => {
   };
 
   React.useEffect(() => {
+    if (userToken === null){
+      return
+    }
+    const getUserData = async () => {
+      try{
+        const res = await axios.get(import.meta.env.VITE_APP_BACKEND_URL + "profile", {
+          headers: {
+            Authorization: `Bearer ${userToken}`,
+          },
+        })
+        console.log("user data", res.data)
+      }catch(err){
+        console.log(err)
+      }
+    }
+    getUserData()
     // console.log(import.meta.env)
-  }, []);
+  }, [userToken]);
 
   const queryClient = new QueryClient();
 
-  const handleLogin = (ev: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    console.log(loginData);
+    try {
+      const res = await axios.post(import.meta.env.VITE_APP_BACKEND_URL + "login", {
+        email: loginData.email,
+        password: loginData.password,
+      })
+
+      if (res.data.code != 200){
+        alert(res.data.message)
+        return
+      }
+
+      const token = res.data.data.token
+
+      setUserToken(token)
+      await tokenAuthStorage.set(token)
+
+      setMode('default')
+
+    } catch(err){
+      console.log(err)
+    }
   };
 
-  const handleRegister = (ev: React.FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-    console.log(registerData);
+    if (registerData.password !== registerData.password_confirmation) {
+      alert('Password tidak sama');
+      return;
+    }
+    try {
+      const res = await axios.post(import.meta.env.VITE_APP_BACKEND_URL + "register", {
+        email: registerData.email,
+        password: registerData.password,
+        password_confirmation: registerData.password_confirmation,
+        name: registerData.name,
+      })
+
+      if (res.data.code != 200){
+        alert(res.data.message)
+        return
+      }
+
+      const token = res.data.data.token
+
+      setUserToken(token)
+      await tokenAuthStorage.set(token)
+
+      setMode('default')
+
+    } catch(err){
+      console.log(err)
+    }
   };
 
   if (mode === 'login')
@@ -599,7 +662,7 @@ const SidePanel = () => {
             }}
             placeholder="masukkan nama kamu"
             className="border-[1px] w-full text-base p-2 rounded border-gray-300"
-            type="email"
+            type="text"
           />
         </div>
         <div className="flex flex-col items-start gap-1">
@@ -640,6 +703,17 @@ const SidePanel = () => {
         {/* <button onClick={googleLogin}>Login Google</button> */}
       </form>
     );
+
+  if (mode === "account") 
+    return (
+      <div  className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col text-base">
+        <h1 className='font-semibold text-lg'>Pengaturan Akun Anda</h1>
+        <div className='flex items-center gap-2'>
+          <h5>Nama Anda</h5>
+          {/* <h5></h5> */}
+        </div>
+      </div>
+  )
 
   return (
     <div>
