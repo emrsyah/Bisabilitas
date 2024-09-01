@@ -1,32 +1,8 @@
 import { withErrorBoundary, withSuspense } from '@chrome-extension-boilerplate/shared';
 import {
-  RectangleGroupIcon,
-  EyeIcon,
-  ComputerDesktopIcon,
-  SpeakerWaveIcon,
-  NewspaperIcon,
-  DocumentArrowUpIcon,
-  PhotoIcon,
-  ArrowsPointingOutIcon,
-  BeakerIcon,
-  ArrowPathIcon,
-  LightBulbIcon,
-  CursorArrowRaysIcon,
-  ChevronLeftIcon,
-  BoltIcon,
-  Bars3BottomLeftIcon,
-  UserIcon,
-  RectangleStackIcon,
-  Bars3BottomRightIcon,
-  Bars3Icon,
-  Bars4Icon,
-  LifebuoyIcon,
-} from '@heroicons/react/16/solid';
-import {
   aiAssistantStorage,
   soundNavigationStorage,
   focusReadStorage,
-  fontSizeStorage,
   dyslexicFontStorage,
   contrastStorage,
   hideImagesStorage,
@@ -36,6 +12,7 @@ import {
   cursorBiggerStorage,
   textAlignmentStorage,
   tokenAuthStorage,
+  fontSizeStoragePercentage,
 } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 import Separator from './components/Separator';
@@ -48,6 +25,33 @@ import axios from 'axios';
 import { FullDisplayAccesibilityCard } from './components/FullDisplayAccesibilityCard';
 import Login, { LoginFormType } from './page/Login';
 import Register, { RegisterFormType } from './page/Register';
+import Account from './page/Account';
+import {
+  IconAlignCenter,
+  IconAlignJustified,
+  IconAlignLeft,
+  IconAlignRight,
+  IconBook,
+  IconChevronLeft,
+  IconContrast,
+  IconContrastFilled,
+  IconDropletFilled,
+  IconDropletHalf2,
+  IconDropletHalfFilled,
+  IconLayout2Filled,
+  IconLetterSpacing,
+  IconLineHeight,
+  IconMessageChatbotFilled,
+  IconMicrophone,
+  IconPhotoOff,
+  IconPointer,
+  IconRefresh,
+  IconStack2Filled,
+  IconTextIncrease,
+  IconTextSpellcheck,
+  IconUnlink,
+  IconUser,
+} from '@tabler/icons-react';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
 // import { ComponentPropsWithoutRef } from 'react';
@@ -56,6 +60,13 @@ export type StateProps = {
   label: string;
   value: string;
 };
+
+const FONT_SIZE_GUIDE = {
+  NORMAL: 100,
+  MEDIUM: 110,
+  LARGE: 130,
+  EXTRA_LARGE: 150,
+}
 
 export type AccesibilityCardProps = {
   title: string;
@@ -95,7 +106,7 @@ const toggleDyslexicFont = async () => {
 };
 
 const toggleFontSize = async () => {
-  await fontSizeStorage.toggle();
+  await fontSizeStoragePercentage.toggle();
 };
 
 const toggleFocusRead = async () => {
@@ -132,12 +143,12 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
     name: 'Keterbatasan Visual',
     state: 'visual-impaired',
     onTurnOn: async () => {
-      await fontSizeStorage.set('large');
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
       await contrastStorage.set('high');
       await textSpacingStorage.set('wide');
     },
     onTurnOff: async () => {
-      await fontSizeStorage.set('normal');
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
       await contrastStorage.set('normal');
       await textSpacingStorage.set('normal');
     },
@@ -160,17 +171,17 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
     onTurnOn: async () => {
       await dyslexicFontStorage.set('openDyslexic');
       await textSpacingStorage.set('wide');
-      await fontSizeStorage.set('large');
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
     },
     onTurnOff: async () => {
       await dyslexicFontStorage.set('default');
       await textSpacingStorage.set('normal');
-      await fontSizeStorage.set('normal');
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
     },
   },
 ];
 
-type UserDataType = {
+export type UserDataType = {
   email: string;
   name: string;
   id: number;
@@ -182,7 +193,7 @@ const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot());
   const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot());
   const [dyslexic, setDyslexic] = React.useState(dyslexicFontStorage.getSnapshot());
-  const [fontSize, setFontSize] = React.useState(fontSizeStorage.getSnapshot());
+  const [fontSize, setFontSize] = React.useState(fontSizeStoragePercentage.getSnapshot());
   const [hideImageState, setHideImageState] = React.useState(hideImagesStorage.getSnapshot());
   const [saturation, setSaturation] = React.useState(saturationStorage.getSnapshot());
   const [soundNavigation, setSoundNavigation] = React.useState(soundNavigationStorage.getSnapshot());
@@ -227,8 +238,8 @@ const SidePanel = () => {
     dyslexicFontStorage.subscribe(() => {
       setDyslexic(dyslexicFontStorage.getSnapshot());
     });
-    fontSizeStorage.subscribe(() => {
-      setFontSize(fontSizeStorage.getSnapshot());
+    fontSizeStoragePercentage.subscribe(() => {
+      setFontSize(fontSizeStoragePercentage.getSnapshot());
     });
     hideImagesStorage.subscribe(() => {
       setHideImageState(hideImagesStorage.getSnapshot());
@@ -264,7 +275,7 @@ const SidePanel = () => {
     {
       title: 'Pengaturan Kontras',
       desc: 'Bantu penyandang disabilitas penglihatan dengan kontras warna optimal',
-      icon: <EyeIcon className="h-6 w-6" />,
+      icon: <IconContrast className="h-6 w-6" />,
       onClick: changeContrast,
       currentState: contrast ? contrast : 'normal',
       normalState: 'normal',
@@ -290,7 +301,8 @@ const SidePanel = () => {
     {
       title: 'Fokus Membaca',
       desc: 'Tingkatkan konsentrasi penyandang disabilitas kognitif saat membaca.',
-      icon: <ComputerDesktopIcon className="h-6 w-6" />,
+      // icon: <ComputerDesktopIcon className="h-6 w-6" />,
+      icon: <IconBook className="h-6 w-6" />,
       onClick: toggleFocusRead,
       currentState: focusRead ? focusRead : 'disabled',
       normalState: 'disabled',
@@ -308,7 +320,7 @@ const SidePanel = () => {
     {
       title: 'Navigasi Suara',
       desc: 'Berdayakan penyandang disabilitas motorik menjelajah web dengan suara.',
-      icon: <SpeakerWaveIcon className="h-6 w-6" />,
+      icon: <IconMicrophone className="h-6 w-6" />,
       onClick: activateSoundNavigation,
       currentState: soundNavigation ? soundNavigation : 'disabled',
       normalState: 'disabled',
@@ -324,9 +336,9 @@ const SidePanel = () => {
       ],
     },
     {
-      title: 'Dyslexia Friendly',
+      title: 'Font Ramah Disleksia',
       desc: 'Dukung penyandang disleksia dengan teks yang lebih mudah dibaca.',
-      icon: <NewspaperIcon className="h-6 w-6" />,
+      icon: <IconTextSpellcheck className="h-6 w-6" />,
       onClick: toggleDyslexicFont,
       currentState: dyslexic ? dyslexic : 'default',
       normalState: 'default',
@@ -344,33 +356,33 @@ const SidePanel = () => {
     {
       title: 'Pembesar Teks',
       desc: 'Perbesar teks bagi penyandang disabilitas penglihatan tanpa merusak layout.',
-      icon: <DocumentArrowUpIcon className="h-6 w-6" />,
+      icon: <IconTextIncrease className="h-6 w-6" />,
       onClick: toggleFontSize,
-      currentState: fontSize ? fontSize : 'normal',
-      normalState: 'normal',
+      currentState: fontSize?.toString() ?? "100",
+      normalState: "100",
       state: [
         {
           label: 'Pembesar Teks',
-          value: 'normal',
+          value: FONT_SIZE_GUIDE.NORMAL.toString(),
         },
         {
           label: 'Pembesar Teks Medium',
-          value: 'medium',
+          value: FONT_SIZE_GUIDE.MEDIUM.toString(),
         },
         {
           label: 'Pembesar Teks Besar',
-          value: 'large',
+          value: FONT_SIZE_GUIDE.LARGE.toString(),
         },
         {
           label: 'Pembesar Teks Ekstra Besar',
-          value: 'extra-large',
+          value: FONT_SIZE_GUIDE.EXTRA_LARGE.toString(),
         },
       ],
     },
     {
       title: 'Sembunyikan Gambar',
       desc: 'Bantu penyandang disabilitas fokus dengan menyederhanakan tampilan.',
-      icon: <PhotoIcon className="h-6 w-6" />,
+      icon: <IconPhotoOff className="h-6 w-6" />,
       onClick: hideImage,
       currentState: hideImageState ? hideImageState : 'disabled',
       normalState: 'disabled',
@@ -388,7 +400,7 @@ const SidePanel = () => {
     {
       title: 'Jarak Teks',
       desc: 'Sesuaikan spasi teks untuk kenyamanan penyandang disabilitas visual.',
-      icon: <ArrowsPointingOutIcon className="h-6 w-6" />,
+      icon: <IconLetterSpacing className="h-6 w-6" />,
       onClick: toggleTextSpacing,
       currentState: textSpacing ? textSpacing : 'normal',
       normalState: 'normal',
@@ -414,7 +426,7 @@ const SidePanel = () => {
     {
       title: 'Pengatur Saturasi',
       desc: 'Atur warna sesuai kebutuhan penyandang disabilitas sensitif cahaya.',
-      icon: <BeakerIcon className="h-6 w-6" />,
+      icon: <IconDropletHalf2 className="h-6 w-6" />,
       onClick: toggleSaturation,
       currentState: saturation ? saturation : 'normal',
       normalState: 'normal',
@@ -436,7 +448,7 @@ const SidePanel = () => {
     {
       title: 'Sorot Link',
       desc: 'Sorot link yang ada di website agar menjadi lebih jelas',
-      icon: <LightBulbIcon className="h-6 w-6" />,
+      icon: <IconUnlink className="h-6 w-6" />,
       normalState: 'disabled',
       onClick: toggleHighlightLink,
       state: [
@@ -455,7 +467,7 @@ const SidePanel = () => {
       title: 'Cursor Besar',
       desc: 'Perbesar cursor yang kamu gunakan agar lebih mudah dalam melakukan navigasi',
       // icon: < className='h-6 w-6' />,
-      icon: <CursorArrowRaysIcon className="h-6 w-6" />,
+      icon: <IconPointer className="h-6 w-6" />,
       normalState: 'disabled',
       onClick: toggleBiggerCursor,
       state: [
@@ -474,7 +486,7 @@ const SidePanel = () => {
       title: 'Rata Teks',
       desc: 'Ubah arah dan kerataan teks sesuai preferensi dan cara baca anda',
       // icon: < className='h-6 w-6' />,
-      icon: <Bars3BottomLeftIcon className="h-6 w-6" />,
+      icon: <IconAlignLeft className="h-6 w-6" />,
       normalState: 'normal',
       onClick: toggleTextAlignment,
       state: [
@@ -507,7 +519,7 @@ const SidePanel = () => {
     await contrastStorage.set('normal');
     await textSpacingStorage.set('normal');
     await dyslexicFontStorage.set('default');
-    await fontSizeStorage.set('normal');
+    await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
     await hideImagesStorage.set('disabled');
     await saturationStorage.set('normal');
     await soundNavigationStorage.set('disabled');
@@ -653,25 +665,9 @@ const SidePanel = () => {
 
   if (mode === 'account')
     return (
-      <div className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col text-base">
+      <Account handleLogout={handleLogout} userData={userData}>
         <ButtonKembali />
-
-        <h1 className="font-semibold text-xl mt-3">Pengaturan Akun Anda</h1>
-        <div className="mt-2"></div>
-        <Separator />
-        <div className="flex flex-col gap-3 font-medium mt-2">
-          <h5>Nama: {userData?.name ?? '-'}</h5>
-          <h5>Email: {userData?.email ?? '-'}</h5>
-        </div>
-        <div className="mt-3"></div>
-        <Separator />
-        <div className="mt-2"></div>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white font-medium p-2 rounded w-full hover:bg-red-600">
-          Logout dari Bisabilitas
-        </button>
-      </div>
+      </Account>
     );
 
   return (
@@ -682,7 +678,7 @@ const SidePanel = () => {
             <button
               onClick={() => setMode('default')}
               className="rounded-md border-[2px] border-gray-100 p-2 flex items-center gap-1">
-              <ChevronLeftIcon className="h-6 w-6" />
+              <IconChevronLeft className="h-6 w-6" />
             </button>
             <h1 className="font-medium text-base">Tanyakan AI Tentang Website Ini</h1>
           </nav>
@@ -702,7 +698,7 @@ const SidePanel = () => {
                   setMode(userToken !== null ? 'account' : 'login');
                 }}
                 className="w-8 text-black hover:bg-blue-100 h-8 rounded-md justify-center items-center flex bg-white ">
-                <UserIcon className="w-8 h-8" />
+                <IconUser className="w-8 h-8" />
                 {/* <h1 className=" font-bold ">ID</h1> */}
               </button>
             </nav>
@@ -711,8 +707,8 @@ const SidePanel = () => {
             {/* Hilangin AI dulu */}
             <button
               onClick={() => setMode('ai')}
-              className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == 'enabled' ? 'bg-blue-600 text-white' : ' bg-white text-blue-600'} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
-              <BoltIcon className="h-6 w-6" />
+              className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == 'enabled' ? 'bg-blue-600 text-white' : ' bg-white '} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
+              <IconMessageChatbotFilled className="h-6 w-6" />
               <h1 className="text-lg font-bold ">
                 AI Assistant <span className="text-sm">(beta)</span>
               </h1>
@@ -757,9 +753,9 @@ const SidePanel = () => {
                   key={d}
                   className={`flex items-center gap-2 flex-1 flex-grow border-gray-100 shadow border-[2px] rounded p-2 ${displayType == d ? ' border-blue-600 text-blue-600' : null} `}>
                   {d == 'minimalis' ? (
-                    <RectangleGroupIcon className="h-6 w-6 p-1" />
+                    <IconStack2Filled className="h-6 w-6" />
                   ) : (
-                    <RectangleStackIcon className="h-6 w-6 p-1" />
+                    <IconLayout2Filled className="h-6 w-6" />
                   )}
                   <p className="font-semibold text-base text-start">Tampilan {d}</p>
                 </button>
@@ -772,7 +768,7 @@ const SidePanel = () => {
                 className="p-2 flex items-center justify-center rounded border-[1.3px] text-gray-900 hover:border-blue-600 hover:text-blue-600 text-base gap-2 font-medium ml-auto"
                 onClick={resetState}>
                 <p>Atur ulang</p>
-                <ArrowPathIcon className="h-4 w-4" />
+                <IconRefresh className="h-4 w-4" />
               </button>
             </div>
             {displayType === 'minimalis' ? (
@@ -799,27 +795,45 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleFocusRead}
-                    currentState={accesibilityData.find(d => d.title === 'Fokus Membaca')?.currentState ?? ''}
+                    currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
                     wider
-                    turnOnState={'enabled'}>
-                    <ComputerDesktopIcon className="w-8 h-8" />
-                    <p>Fokus Membaca</p>
+                    turnOnState={'openDyslexic'}>
+                    <IconTextIncrease className="w-8 h-8" />
+                    <p>Atur Besar Teks</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleFocusRead}
+                    currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
+                    turnOnState={'openDyslexic'}>
+                    <IconTextSpellcheck className="w-8 h-8" />
+                    <p>Font Ramah Disleksia</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleHighlightLink}
                     currentState={accesibilityData.find(d => d.title === 'Sorot Link')?.currentState ?? ''}
                     turnOnState={'enabled'}>
-                    <LightBulbIcon className="w-8 h-8" />
+                    <IconUnlink className="w-8 h-8" />
                     <p>Sorot Link</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={hideImage}
-                    currentState={accesibilityData.find(d => d.title === 'Sembunyikan Gambar')?.currentState ?? ''}
-                    turnOnState={'enabled'}>
-                    <PhotoIcon className="w-8 h-8" />
-                    <p>Sembunyikan Gambar</p>
+                    onClick={toggleFocusRead}
+                    currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
+                    wider
+                    turnOnState={'openDyslexic'}>
+                    <IconLetterSpacing className="w-8 h-8" />
+                    <p>Atur Jarak Teks</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleFocusRead}
+                    currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
+                    wider
+                    turnOnState={'openDyslexic'}>
+                    <IconLineHeight className="w-8 h-8" />
+                    <p>Atur Tinggi Baris</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
@@ -828,7 +842,7 @@ const SidePanel = () => {
                     }}
                     currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
                     turnOnState={'left'}>
-                    <Bars3BottomLeftIcon className="w-8 h-8" />
+                    <IconAlignLeft className="w-8 h-8" />
                     <p>Teks Rata Kiri</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
@@ -836,7 +850,7 @@ const SidePanel = () => {
                     onClick={hideImage}
                     currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
                     turnOnState={'right'}>
-                    <Bars3BottomRightIcon className="w-8 h-8" />
+                    <IconAlignRight className="w-8 h-8" />
                     <p>Teks Rata Kanan</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
@@ -844,7 +858,7 @@ const SidePanel = () => {
                     onClick={hideImage}
                     currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
                     turnOnState={'center'}>
-                    <Bars3Icon className="w-8 h-8" />
+                    <IconAlignCenter className="w-8 h-8" />
                     <p>Teks Rata Tengah</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
@@ -852,7 +866,7 @@ const SidePanel = () => {
                     onClick={hideImage}
                     currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
                     turnOnState={'justify'}>
-                    <Bars4Icon className="w-8 h-8" />
+                    <IconAlignJustified className="w-8 h-8" />
                     <p>Teks Rata Selaras</p>
                   </FullDisplayAccesibilityCard>
                 </div>
@@ -871,7 +885,7 @@ const SidePanel = () => {
                     }}
                     currentState={accesibilityData.find(d => d.title === 'Pengaturan Kontras')?.currentState ?? ''}
                     turnOnState={'high'}>
-                    <EyeIcon className="w-8 h-8" />
+                    <IconContrast className="w-8 h-8" />
                     <p>Kontras Tinggi</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
@@ -879,7 +893,7 @@ const SidePanel = () => {
                     onClick={toggleHighlightLink}
                     currentState={accesibilityData.find(d => d.title === 'Pengaturan Monokrom')?.currentState ?? ''}
                     turnOnState={'enabled'}>
-                    <LifebuoyIcon className="w-8 h-8" />
+                    <IconContrastFilled className="w-8 h-8" />
                     <p>Konten Monokrom</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
@@ -893,7 +907,7 @@ const SidePanel = () => {
                     }}
                     currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
                     turnOnState={'high'}>
-                    <BeakerIcon className="w-8 h-8" />
+                    <IconDropletFilled className="w-8 h-8" />
                     <p>Saturasi Tinggi</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
@@ -907,63 +921,29 @@ const SidePanel = () => {
                     }}
                     currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
                     turnOnState={'low'}>
-                    <BeakerIcon className="w-8 h-8" />
+                    <IconDropletHalfFilled className="w-8 h-8" />
                     <p>Saturasi Rendah</p>
                   </FullDisplayAccesibilityCard>
                 </div>
 
                 {/* 3. PENGATURAN LAINNYA */}
                 <div className=" grid grid-cols-2 gap-2">
-                  <h2 className="font-semibold text-lg col-span-2">Pengaturan Lanjutan</h2>
+                  <h2 className="font-semibold text-lg col-span-2">Lainnya</h2>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={async () => {
-                      if (contrast == 'high') {
-                        await contrastStorage.set('normal');
-                      } else {
-                        await contrastStorage.set('high');
-                      }
-                    }}
-                    currentState={accesibilityData.find(d => d.title === 'Pengaturan Kontras')?.currentState ?? ''}
-                    turnOnState={'high'}>
-                    <EyeIcon className="w-8 h-8" />
-                    <p>Kontras Tinggi</p>
-                  </FullDisplayAccesibilityCard>
-                  <FullDisplayAccesibilityCard
-                    desc=""
-                    onClick={toggleHighlightLink}
-                    currentState={accesibilityData.find(d => d.title === 'Pengaturan Monokrom')?.currentState ?? ''}
+                    onClick={toggleFocusRead}
+                    currentState={accesibilityData.find(d => d.title === 'Fokus Membaca')?.currentState ?? ''}
                     turnOnState={'enabled'}>
-                    <LifebuoyIcon className="w-8 h-8" />
-                    <p>Konten Monokrom</p>
+                    <IconBook className="w-8 h-8" />
+                    <p>Fokus Membaca</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={async () => {
-                      if (saturation == 'high') {
-                        await saturationStorage.set('normal');
-                      } else {
-                        await saturationStorage.set('high');
-                      }
-                    }}
-                    currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
-                    turnOnState={'high'}>
-                    <BeakerIcon className="w-8 h-8" />
-                    <p>Saturasi Tinggi</p>
-                  </FullDisplayAccesibilityCard>
-                  <FullDisplayAccesibilityCard
-                    desc=""
-                    onClick={async () => {
-                      if (saturation == 'low') {
-                        await saturationStorage.set('normal');
-                      } else {
-                        await saturationStorage.set('low');
-                      }
-                    }}
-                    currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
-                    turnOnState={'low'}>
-                    <BeakerIcon className="w-8 h-8" />
-                    <p>Saturasi Rendah</p>
+                    onClick={hideImage}
+                    currentState={accesibilityData.find(d => d.title === 'Sembunyikan Gambar')?.currentState ?? ''}
+                    turnOnState={'enabled'}>
+                    <IconPhotoOff className="w-8 h-8" />
+                    <p>Sembunyikan Gambar</p>
                   </FullDisplayAccesibilityCard>
                 </div>
               </div>
@@ -976,14 +956,3 @@ const SidePanel = () => {
 };
 
 export default withErrorBoundary(withSuspense(SidePanel, <div> Loading ... </div>), <div> Error Occur </div>);
-
-{
-  /* <Toggle initialState={smallDisplay} onToggle={setSmallDisplay} /> */
-}
-{
-  /* <button
-                className="p-1 flex items-center justify-center rounded border h-10 w-10 ml-auto"
-                onClick={resetState}>
-                <ArrowPathIcon className="h-6 w-6" />
-              </button> */
-}

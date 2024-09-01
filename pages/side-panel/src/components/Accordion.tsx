@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {IdentificationIcon} from '@heroicons/react/16/solid'
+import { IconUserScan } from '@tabler/icons-react';
 
 interface AccordionProps {
   title: string;
@@ -18,7 +18,7 @@ const Accordion: React.FC<AccordionProps> = ({ title, children }) => {
         className="w-full py-2 text-left flex justify-between items-center"
       >
         <div className='flex items-center gap-2'>
-            <IdentificationIcon className='h-6 w-6' />
+            <IconUserScan className='h-6 w-6' />
         <p className="font-semibold text-base">{title}</p>
         </div>
         <svg

@@ -4,17 +4,19 @@ import { hideImages } from './hideImage';
 import { toggleSaturation } from './toggleSaturation';
 import {applyTextSpacing} from './toggleTextSpacing'
 import { applyDyslexicFont } from './changeDyslexic';
-import { applyTextSize } from './changeFontSize';
+// import { applyTextSize } from './changeFontSize';
 import { applyFocusRead } from './focusRead';
 import { applySoundNavigation } from './soundNavigation';
 import { toggleHighlightLink } from './highlightLink';
 import { toggleBigCursor } from './toggleBigCursor';
 import { applyTextAlignment } from './toggleTextAlignment'
+import {applyTextSizePercentage} from './changeFontSizePercentage'
 // import {toggleAiAssistant} from './AiAssistant'
   
 
 console.log('content script loaded');
 
+void applyTextSizePercentage()
 void applyTextAlignment()
 void toggleBigCursor()
 void toggleHighlightLink()
@@ -24,7 +26,7 @@ void hideImages()
 void applyTextSpacing()
 void toggleSaturation()
 void applyDyslexicFont()
-void applyTextSize()
+// void applyTextSize()
 void applyFocusRead()
 void applySoundNavigation()
 // void toggleAiAssistant()

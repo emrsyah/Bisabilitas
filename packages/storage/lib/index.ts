@@ -15,8 +15,10 @@ import { cursorBiggerStorage } from './cursorStorage';
 import { audioEnhancementStorage } from './audioEnhancementStorage';
 import { textAlignmentStorage } from './textAlignmentStorage';
 import { tokenAuthStorage } from './tokenAuthStorage';
+import {fontSizeStoragePercentage} from './fontSizePercentageStorage'
 
 export {
+  fontSizeStoragePercentage,
   tokenAuthStorage,
   textAlignmentStorage,
   audioEnhancementStorage,
