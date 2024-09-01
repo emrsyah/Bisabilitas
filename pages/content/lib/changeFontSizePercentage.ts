@@ -12,7 +12,7 @@ export async function applyTextSizePercentage() {
   // Subscribe ke perubahan
   fontSizeStoragePercentage.subscribe(() => {
     const state = fontSizeStoragePercentage.getSnapshot();
-    // console.log('secon size',state)
+    console.log('secon size',state)
     if (state) {
       setTextSize(state);
     }

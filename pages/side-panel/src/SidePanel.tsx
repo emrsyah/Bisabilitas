@@ -52,6 +52,7 @@ import {
   IconUnlink,
   IconUser,
 } from '@tabler/icons-react';
+import { ControlAccesibilityCard } from './components/ControlAccesibilityCard';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
 // import { ComponentPropsWithoutRef } from 'react';
@@ -66,7 +67,7 @@ const FONT_SIZE_GUIDE = {
   MEDIUM: 110,
   LARGE: 130,
   EXTRA_LARGE: 150,
-}
+};
 
 export type AccesibilityCardProps = {
   title: string;
@@ -358,8 +359,8 @@ const SidePanel = () => {
       desc: 'Perbesar teks bagi penyandang disabilitas penglihatan tanpa merusak layout.',
       icon: <IconTextIncrease className="h-6 w-6" />,
       onClick: toggleFontSize,
-      currentState: fontSize?.toString() ?? "100",
-      normalState: "100",
+      currentState: fontSize?.toString() ?? '100',
+      normalState: '100',
       state: [
         {
           label: 'Pembesar Teks',
@@ -792,15 +793,23 @@ const SidePanel = () => {
                 {/* 1. PENGATURAN KONTEN */}
                 <div className=" grid grid-cols-2 gap-2">
                   <h2 className="font-semibold text-lg col-span-2">Pengaturan Konten</h2>
-                  <FullDisplayAccesibilityCard
+                  <ControlAccesibilityCard
+                    increaseHandler={async () => {
+                      await fontSizeStoragePercentage.increase();
+                    }}
+                    decreaseHandler={async () => {
+                      await fontSizeStoragePercentage.decrease();
+                    }}
                     desc=""
                     onClick={toggleFocusRead}
-                    currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
+                    normalState={100}
                     wider
-                    turnOnState={'openDyslexic'}>
-                    <IconTextIncrease className="w-8 h-8" />
-                    <p>Atur Besar Teks</p>
-                  </FullDisplayAccesibilityCard>
+                    currentState={fontSize ?? 100}>
+                    <div className="flex gap-2 items-center text-base justify-center">
+                      <IconTextIncrease className="w-5 h-5" />
+                      <p>Atur Besar Teks</p>
+                    </div>
+                  </ControlAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleFocusRead}
@@ -944,6 +953,22 @@ const SidePanel = () => {
                     turnOnState={'enabled'}>
                     <IconPhotoOff className="w-8 h-8" />
                     <p>Sembunyikan Gambar</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={activateSoundNavigation}
+                    currentState={accesibilityData.find(d => d.title === 'Navigasi Suara')?.currentState ?? ''}
+                    turnOnState={'enabled'}>
+                    <IconMicrophone className="w-8 h-8" />
+                    <p>Navigasi Suara</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleBiggerCursor}
+                    currentState={accesibilityData.find(d => d.title === 'Cursor Besar')?.currentState ?? ''}
+                    turnOnState={'enabled'}>
+                    <IconPointer className="w-8 h-8" />
+                    <p>Perbesar Cursor</p>
                   </FullDisplayAccesibilityCard>
                 </div>
               </div>
