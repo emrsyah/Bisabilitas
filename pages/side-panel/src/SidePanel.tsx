@@ -16,6 +16,11 @@ import {
   BoltIcon,
   Bars3BottomLeftIcon,
   UserIcon,
+  RectangleStackIcon,
+  Bars3BottomRightIcon,
+  Bars3Icon,
+  Bars4Icon,
+  LifebuoyIcon,
 } from '@heroicons/react/16/solid';
 import {
   aiAssistantStorage,
@@ -35,11 +40,14 @@ import {
 import React from 'react';
 import Separator from './components/Separator';
 import Accordion from './components/Accordion';
-import Toggle from './components/Toggle';
+// import Toggle from './components/Toggle';
 import AccesibilityCard from './components/AccesibilityCard';
 import AiChat from './AiChat';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import axios from 'axios';
+import { FullDisplayAccesibilityCard } from './components/FullDisplayAccesibilityCard';
+import Login, { LoginFormType } from './page/Login';
+import Register, { RegisterFormType } from './page/Register';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
 // import { ComponentPropsWithoutRef } from 'react';
@@ -162,23 +170,13 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
   },
 ];
 
-type LoginFormType = {
-  email: string;
-  password: string;
-};
-
-type RegisterFormType = {
-  email: string;
-  name: string;
-  password: string;
-  password_confirmation: string;
-};
-
 type UserDataType = {
   email: string;
   name: string;
   id: number;
 };
+
+const displayTypeData = ['minimalis', 'penuh'];
 
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot());
@@ -193,11 +191,14 @@ const SidePanel = () => {
   const [highlightLink, setHighlightLink] = React.useState(linkHighlightStorage.getSnapshot());
   const [biggerCursor, setBiggerCursor] = React.useState(cursorBiggerStorage.getSnapshot());
   const [textAlignment, setTextAlignment] = React.useState(textAlignmentStorage.getSnapshot());
+
   const [userToken, setUserToken] = React.useState<string | null>(tokenAuthStorage.getSnapshot());
+
   const [loginData, setLoginData] = React.useState<LoginFormType>({
     email: '',
     password: '',
   });
+
   const [registerData, setRegisterData] = React.useState<RegisterFormType>({
     email: '',
     name: '',
@@ -207,6 +208,7 @@ const SidePanel = () => {
 
   const [mode, setMode] = React.useState<'ai' | 'default' | 'account' | 'login' | 'register'>('default');
 
+  const [displayType, setDisplayType] = React.useState<'minimalis' | 'penuh'>('minimalis');
   const [smallDisplay, setSmallDisplay] = React.useState(false);
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
 
@@ -366,7 +368,7 @@ const SidePanel = () => {
       ],
     },
     {
-      title: 'Sembuyikan Gambar',
+      title: 'Sembunyikan Gambar',
       desc: 'Bantu penyandang disabilitas fokus dengan menyederhanakan tampilan.',
       icon: <PhotoIcon className="h-6 w-6" />,
       onClick: hideImage,
@@ -616,11 +618,11 @@ const SidePanel = () => {
     if (userToken === null) {
       return;
     }
-    setMode("default")
+    setMode('default');
     await tokenAuthStorage.set(null);
-    setUserToken(null)
+    setUserToken(null);
     setUserData(null);
-  }
+  };
 
   const ButtonKembali = () => (
     <button
@@ -633,117 +635,20 @@ const SidePanel = () => {
 
   if (mode === 'login')
     return (
-      <form onSubmit={handleLogin} className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col">
+      <Login handleLogin={handleLogin} loginData={loginData} setLoginData={setLoginData} setMode={setMode}>
         <ButtonKembali />
-        <h1 className="text-2xl font-bold text-blue-600">Masuk Bisabilitas</h1>
-        <div className="mt-3"></div>
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-lg font-medium">Email</span>
-          <input
-            value={loginData.email}
-            onChange={e => {
-              setLoginData(prev => ({ ...prev, email: e.target.value }));
-            }}
-            placeholder="nama@gmail.com"
-            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
-            type="email"
-          />
-        </div>
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-lg font-medium">Kata Sandi</span>
-          <input
-            value={loginData.password}
-            onChange={e => {
-              setLoginData(prev => ({ ...prev, password: e.target.value }));
-            }}
-            placeholder="masukkan kata sandi anda"
-            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
-            type="password"
-          />
-        </div>
-        <button type="submit" className="text-base bg-blue-600 text-white rounded p-1 w-full font-medium mt-1">
-          Masuk Bisabilitas
-        </button>
-        <div className="mt-1"></div>
-        <Separator />
-        <span className="text-base font-medium text-gray-700 mt-1 flex items-center text-center">
-          Belum punya akun?{' '}
-          <button type="button" onClick={() => setMode('register')} className="text-blue-600 underline ml-1">
-            Daftar
-          </button>
-        </span>
-        {/* <button onClick={googleLogin}>Login Google</button> */}
-      </form>
+      </Login>
     );
 
   if (mode === 'register')
     return (
-      <form onSubmit={handleRegister} className="mx-4 sm:mx-auto py-6 min-h-screen flex gap-2 flex-col">
+      <Register
+        handleRegister={handleRegister}
+        registerData={registerData}
+        setRegisterData={setRegisterData}
+        setMode={setMode}>
         <ButtonKembali />
-
-        <h1 className="text-2xl font-bold text-blue-600">Daftar Bisabilitas</h1>
-        <div className="mt-3"></div>
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-lg font-medium">Email</span>
-          <input
-            value={registerData.email}
-            onChange={e => {
-              setRegisterData(prev => ({ ...prev, email: e.target.value }));
-            }}
-            placeholder="nama@gmail.com"
-            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
-            type="email"
-          />
-        </div>
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-lg font-medium">Nama</span>
-          <input
-            value={registerData.name}
-            onChange={e => {
-              setRegisterData(prev => ({ ...prev, name: e.target.value }));
-            }}
-            placeholder="masukkan nama kamu"
-            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
-            type="text"
-          />
-        </div>
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-lg font-medium">Kata Sandi</span>
-          <input
-            value={registerData.password}
-            onChange={e => {
-              setRegisterData(prev => ({ ...prev, password: e.target.value }));
-            }}
-            placeholder="masukkan kata sandi anda"
-            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
-            type="password"
-          />
-        </div>
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-lg font-medium">Konfirmasi Kata Sandi</span>
-          <input
-            value={registerData.password_confirmation}
-            onChange={e => {
-              setRegisterData(prev => ({ ...prev, password_confirmation: e.target.value }));
-            }}
-            placeholder="konfirmasi kata sandi anda"
-            className="border-[1px] w-full text-base p-2 rounded border-gray-300"
-            type="password"
-          />
-        </div>
-        <button type="submit" className="text-base bg-blue-600 text-white rounded p-1 w-full font-medium mt-1">
-          Daftar Bisabilitas
-        </button>
-        <div className="mt-1"></div>
-        <Separator />
-        <span className="text-base font-medium text-gray-700 mt-1 flex items-center text-center">
-          Sudah punya akun?{' '}
-          <button type="button" onClick={() => setMode('login')} className="text-blue-600 underline ml-1">
-            Masuk
-          </button>
-        </span>
-        {/* <button onClick={googleLogin}>Login Google</button> */}
-      </form>
+      </Register>
     );
 
   if (mode === 'account')
@@ -761,7 +666,11 @@ const SidePanel = () => {
         <div className="mt-3"></div>
         <Separator />
         <div className="mt-2"></div>
-        <button onClick={handleLogout} className='bg-red-500 text-white font-medium p-2 rounded w-full hover:bg-red-600'>Logout dari Bisabilitas</button>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white font-medium p-2 rounded w-full hover:bg-red-600">
+          Logout dari Bisabilitas
+        </button>
       </div>
     );
 
@@ -785,7 +694,7 @@ const SidePanel = () => {
       ) : (
         <>
           <div className="bg-blue-900 text-white p-2">
-            <nav className="mx-4 sm:mx-auto my-2 max-w-sm flex items-center justify-between">
+            <nav className="mx-4 sm:mx-auto my-2 max-w-2xl flex items-center justify-between">
               <h1 className="font-semibold text-xl">Bisabilitas - X</h1>
               {/* <h1>{env}</h1> */}
               <button
@@ -798,7 +707,7 @@ const SidePanel = () => {
               </button>
             </nav>
           </div>
-          <main className="grid grid-cols-2 gap-4 mx-4 sm:mx-auto my-6">
+          <main className="grid grid-cols-2 gap-4 mx-4 max-w-2xl sm:mx-auto sm:px-3 my-6">
             {/* Hilangin AI dulu */}
             <button
               onClick={() => setMode('ai')}
@@ -839,36 +748,226 @@ const SidePanel = () => {
               </Accordion>
             </div>
             <Separator />
-            <div className="col-span-2 grid grid-cols-5 justify-between">
-              <div className="flex items-center justify-between gap-1 w-full col-span-4">
-                <div className="flex items-center gap-2">
-                  <RectangleGroupIcon className="h-6 w-6 p-1" />
-                  <p className="font-semibold text-base">{smallDisplay ? 'Display Kecil' : 'Display Lebar'}</p>
-                </div>
-                <Toggle initialState={smallDisplay} onToggle={setSmallDisplay} />
-              </div>
-              <button
-                className="p-1 flex items-center justify-center rounded border h-10 w-10 ml-auto"
-                onClick={resetState}>
-                <ArrowPathIcon className="h-6 w-6" />
-              </button>
-            </div>
-            <Separator />
-            <div className={`grid gap-4 ${smallDisplay ? 'grid-cols-3' : 'grid-cols-2'} col-span-2`}>
-              {accesibilityData.map(d => (
-                <AccesibilityCard
-                  smallDisplay={smallDisplay}
-                  key={d.title}
-                  desc={d.desc}
-                  title={d.title}
-                  icon={d.icon}
-                  onClick={d.onClick}
-                  state={d.state}
-                  currentState={d.currentState}
-                  normalState={d.normalState}
-                />
+            <div className="col-span-2 flex items-center justify-between gap-2 w-full ">
+              {displayTypeData.map(d => (
+                <button
+                  onClick={() => {
+                    setDisplayType(d as 'minimalis' | 'penuh');
+                  }}
+                  key={d}
+                  className={`flex items-center gap-2 flex-1 flex-grow border-gray-100 shadow border-[2px] rounded p-2 ${displayType == d ? ' border-blue-600 text-blue-600' : null} `}>
+                  {d == 'minimalis' ? (
+                    <RectangleGroupIcon className="h-6 w-6 p-1" />
+                  ) : (
+                    <RectangleStackIcon className="h-6 w-6 p-1" />
+                  )}
+                  <p className="font-semibold text-base text-start">Tampilan {d}</p>
+                </button>
               ))}
             </div>
+            <Separator />
+            <div className="flex items-center justify-between col-span-2">
+              {/* <h2 className="text-lg font-bold">Fitur Aksesibilitas</h2> */}
+              <button
+                className="p-2 flex items-center justify-center rounded border-[1.3px] text-gray-900 hover:border-blue-600 hover:text-blue-600 text-base gap-2 font-medium ml-auto"
+                onClick={resetState}>
+                <p>Atur ulang</p>
+                <ArrowPathIcon className="h-4 w-4" />
+              </button>
+            </div>
+            {displayType === 'minimalis' ? (
+              <div className={`grid gap-4 ${smallDisplay ? 'grid-cols-3' : 'grid-cols-2 sm:grid-cols-3'} col-span-2`}>
+                {accesibilityData.map(d => (
+                  <AccesibilityCard
+                    smallDisplay={smallDisplay}
+                    key={d.title}
+                    desc={d.desc}
+                    title={d.title}
+                    icon={d.icon}
+                    onClick={d.onClick}
+                    state={d.state}
+                    currentState={d.currentState}
+                    normalState={d.normalState}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="col-span-2 flex flex-col gap-5">
+                {/* 1. PENGATURAN KONTEN */}
+                <div className=" grid grid-cols-2 gap-2">
+                  <h2 className="font-semibold text-lg col-span-2">Pengaturan Konten</h2>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleFocusRead}
+                    currentState={accesibilityData.find(d => d.title === 'Fokus Membaca')?.currentState ?? ''}
+                    wider
+                    turnOnState={'enabled'}>
+                    <ComputerDesktopIcon className="w-8 h-8" />
+                    <p>Fokus Membaca</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleHighlightLink}
+                    currentState={accesibilityData.find(d => d.title === 'Sorot Link')?.currentState ?? ''}
+                    turnOnState={'enabled'}>
+                    <LightBulbIcon className="w-8 h-8" />
+                    <p>Sorot Link</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={hideImage}
+                    currentState={accesibilityData.find(d => d.title === 'Sembunyikan Gambar')?.currentState ?? ''}
+                    turnOnState={'enabled'}>
+                    <PhotoIcon className="w-8 h-8" />
+                    <p>Sembunyikan Gambar</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
+                      await textAlignmentStorage.set(textAlignment == 'left' ? 'normal' : 'left');
+                    }}
+                    currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
+                    turnOnState={'left'}>
+                    <Bars3BottomLeftIcon className="w-8 h-8" />
+                    <p>Teks Rata Kiri</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={hideImage}
+                    currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
+                    turnOnState={'right'}>
+                    <Bars3BottomRightIcon className="w-8 h-8" />
+                    <p>Teks Rata Kanan</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={hideImage}
+                    currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
+                    turnOnState={'center'}>
+                    <Bars3Icon className="w-8 h-8" />
+                    <p>Teks Rata Tengah</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={hideImage}
+                    currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
+                    turnOnState={'justify'}>
+                    <Bars4Icon className="w-8 h-8" />
+                    <p>Teks Rata Selaras</p>
+                  </FullDisplayAccesibilityCard>
+                </div>
+
+                {/* 2. PENGATURAN WARNA */}
+                <div className=" grid grid-cols-2 gap-2">
+                  <h2 className="font-semibold text-lg col-span-2">Pengaturan Warna</h2>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
+                      if (contrast == 'high') {
+                        await contrastStorage.set('normal');
+                      } else {
+                        await contrastStorage.set('high');
+                      }
+                    }}
+                    currentState={accesibilityData.find(d => d.title === 'Pengaturan Kontras')?.currentState ?? ''}
+                    turnOnState={'high'}>
+                    <EyeIcon className="w-8 h-8" />
+                    <p>Kontras Tinggi</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleHighlightLink}
+                    currentState={accesibilityData.find(d => d.title === 'Pengaturan Monokrom')?.currentState ?? ''}
+                    turnOnState={'enabled'}>
+                    <LifebuoyIcon className="w-8 h-8" />
+                    <p>Konten Monokrom</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
+                      if (saturation == 'high') {
+                        await saturationStorage.set('normal');
+                      } else {
+                        await saturationStorage.set('high');
+                      }
+                    }}
+                    currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
+                    turnOnState={'high'}>
+                    <BeakerIcon className="w-8 h-8" />
+                    <p>Saturasi Tinggi</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
+                      if (saturation == 'low') {
+                        await saturationStorage.set('normal');
+                      } else {
+                        await saturationStorage.set('low');
+                      }
+                    }}
+                    currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
+                    turnOnState={'low'}>
+                    <BeakerIcon className="w-8 h-8" />
+                    <p>Saturasi Rendah</p>
+                  </FullDisplayAccesibilityCard>
+                </div>
+
+                {/* 3. PENGATURAN LAINNYA */}
+                <div className=" grid grid-cols-2 gap-2">
+                  <h2 className="font-semibold text-lg col-span-2">Pengaturan Lanjutan</h2>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
+                      if (contrast == 'high') {
+                        await contrastStorage.set('normal');
+                      } else {
+                        await contrastStorage.set('high');
+                      }
+                    }}
+                    currentState={accesibilityData.find(d => d.title === 'Pengaturan Kontras')?.currentState ?? ''}
+                    turnOnState={'high'}>
+                    <EyeIcon className="w-8 h-8" />
+                    <p>Kontras Tinggi</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleHighlightLink}
+                    currentState={accesibilityData.find(d => d.title === 'Pengaturan Monokrom')?.currentState ?? ''}
+                    turnOnState={'enabled'}>
+                    <LifebuoyIcon className="w-8 h-8" />
+                    <p>Konten Monokrom</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
+                      if (saturation == 'high') {
+                        await saturationStorage.set('normal');
+                      } else {
+                        await saturationStorage.set('high');
+                      }
+                    }}
+                    currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
+                    turnOnState={'high'}>
+                    <BeakerIcon className="w-8 h-8" />
+                    <p>Saturasi Tinggi</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
+                      if (saturation == 'low') {
+                        await saturationStorage.set('normal');
+                      } else {
+                        await saturationStorage.set('low');
+                      }
+                    }}
+                    currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
+                    turnOnState={'low'}>
+                    <BeakerIcon className="w-8 h-8" />
+                    <p>Saturasi Rendah</p>
+                  </FullDisplayAccesibilityCard>
+                </div>
+              </div>
+            )}
           </main>
         </>
       )}
@@ -877,3 +976,14 @@ const SidePanel = () => {
 };
 
 export default withErrorBoundary(withSuspense(SidePanel, <div> Loading ... </div>), <div> Error Occur </div>);
+
+{
+  /* <Toggle initialState={smallDisplay} onToggle={setSmallDisplay} /> */
+}
+{
+  /* <button
+                className="p-1 flex items-center justify-center rounded border h-10 w-10 ml-auto"
+                onClick={resetState}>
+                <ArrowPathIcon className="h-6 w-6" />
+              </button> */
+}
