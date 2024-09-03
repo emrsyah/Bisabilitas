@@ -18,8 +18,10 @@ import { tokenAuthStorage } from './tokenAuthStorage';
 import {fontSizeStoragePercentage} from './fontSizePercentageStorage'
 import {textSpacingStoragePercentage} from './textSpacingPercentageStorage'
 import {lineHeightStorage} from './lineHeightStorage'
+import {monochromeModeStorage} from './monochromeModeStorage'
 
 export {
+  monochromeModeStorage,
   lineHeightStorage,
   textSpacingStoragePercentage,
   fontSizeStoragePercentage,

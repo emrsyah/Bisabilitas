@@ -14,7 +14,8 @@ import {
   tokenAuthStorage,
   fontSizeStoragePercentage,
   textSpacingStoragePercentage,
-  lineHeightStorage
+  lineHeightStorage,
+  monochromeModeStorage
 } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 import Separator from './components/Separator';
@@ -132,6 +133,10 @@ const toggleTextAlignment = async () => {
   await textAlignmentStorage.toggle();
 };
 
+const toggleMonochromeMode = async () => {
+  await monochromeModeStorage.toggle();
+}
+
 type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic';
 
 type AccesibilityProfileProps = {
@@ -206,6 +211,7 @@ const SidePanel = () => {
   const [biggerCursor, setBiggerCursor] = React.useState(cursorBiggerStorage.getSnapshot());
   const [textAlignment, setTextAlignment] = React.useState(textAlignmentStorage.getSnapshot());
   const [lineHeight, setLineHeight] = React.useState(lineHeightStorage.getSnapshot());
+  const [monochrome, setMonochrome] = React.useState(monochromeModeStorage.getSnapshot());
 
   const [userToken, setUserToken] = React.useState<string | null>(tokenAuthStorage.getSnapshot());
 
@@ -230,6 +236,9 @@ const SidePanel = () => {
   const [userData, setUserData] = React.useState<UserDataType | null>(null);
 
   React.useEffect(() => {
+    monochromeModeStorage.subscribe(() => {
+      setMonochrome(monochromeModeStorage.getSnapshot());
+    });
     lineHeightStorage.subscribe(() => {
       setLineHeight(lineHeightStorage.getSnapshot());
     });
@@ -533,6 +542,7 @@ const SidePanel = () => {
     await focusReadStorage.set('disabled');
     await aiAssistantStorage.set('disabled');
     await textAlignmentStorage.set('normal');
+    await monochromeModeStorage.set("disabled")
   };
 
   React.useEffect(() => {
@@ -931,8 +941,8 @@ const SidePanel = () => {
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={toggleHighlightLink}
-                    currentState={accesibilityData.find(d => d.title === 'Pengaturan Monokrom')?.currentState ?? ''}
+                    onClick={toggleMonochromeMode}
+                    currentState={monochrome ?? "disabled"}
                     turnOnState={'enabled'}>
                     <IconContrastFilled className="w-8 h-8" />
                     <p>Konten Monokrom</p>

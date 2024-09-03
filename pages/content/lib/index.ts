@@ -13,11 +13,13 @@ import { applyTextAlignment } from './toggleTextAlignment'
 import {applyTextSizePercentage} from './changeFontSizePercentage'
 import { applyTextSpacing } from './changeLetterSpacingPercentage'
 import {applyLineHeight} from './changeLineHeight'
+import {applyMonochromeMode} from './toggleMonochrome'
 // import {toggleAiAssistant} from './AiAssistant'
   
 
 console.log('content script loaded');
 
+void applyMonochromeMode()
 void applyLineHeight()
 void applyTextSizePercentage()
 void applyTextAlignment()
