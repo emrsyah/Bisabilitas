@@ -16,8 +16,12 @@ import { audioEnhancementStorage } from './audioEnhancementStorage';
 import { textAlignmentStorage } from './textAlignmentStorage';
 import { tokenAuthStorage } from './tokenAuthStorage';
 import {fontSizeStoragePercentage} from './fontSizePercentageStorage'
+import {textSpacingStoragePercentage} from './textSpacingPercentageStorage'
+import {lineHeightStorage} from './lineHeightStorage'
 
 export {
+  lineHeightStorage,
+  textSpacingStoragePercentage,
   fontSizeStoragePercentage,
   tokenAuthStorage,
   textAlignmentStorage,

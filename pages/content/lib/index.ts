@@ -2,7 +2,7 @@ import { toggleTheme } from '@lib/toggleTheme';
 import { toggleContrast } from './toggleContrast';
 import { hideImages } from './hideImage';
 import { toggleSaturation } from './toggleSaturation';
-import {applyTextSpacing} from './toggleTextSpacing'
+// import {applyTextSpacing} from './toggleTextSpacing'
 import { applyDyslexicFont } from './changeDyslexic';
 // import { applyTextSize } from './changeFontSize';
 import { applyFocusRead } from './focusRead';
@@ -11,11 +11,14 @@ import { toggleHighlightLink } from './highlightLink';
 import { toggleBigCursor } from './toggleBigCursor';
 import { applyTextAlignment } from './toggleTextAlignment'
 import {applyTextSizePercentage} from './changeFontSizePercentage'
+import { applyTextSpacing } from './changeLetterSpacingPercentage'
+import {applyLineHeight} from './changeLineHeight'
 // import {toggleAiAssistant} from './AiAssistant'
   
 
 console.log('content script loaded');
 
+void applyLineHeight()
 void applyTextSizePercentage()
 void applyTextAlignment()
 void toggleBigCursor()

@@ -7,12 +7,14 @@ import {
   contrastStorage,
   hideImagesStorage,
   saturationStorage,
-  textSpacingStorage,
+  // textSpacingStorage,
   linkHighlightStorage,
   cursorBiggerStorage,
   textAlignmentStorage,
   tokenAuthStorage,
   fontSizeStoragePercentage,
+  textSpacingStoragePercentage,
+  lineHeightStorage
 } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 import Separator from './components/Separator';
@@ -98,7 +100,7 @@ const toggleSaturation = async () => {
 
 const toggleTextSpacing = async () => {
   // alert('hi')
-  await textSpacingStorage.toggle();
+  await textSpacingStoragePercentage.toggle();
 };
 
 const toggleDyslexicFont = async () => {
@@ -146,12 +148,12 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
     onTurnOn: async () => {
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
       await contrastStorage.set('high');
-      await textSpacingStorage.set('wide');
+      await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
     },
     onTurnOff: async () => {
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
       await contrastStorage.set('normal');
-      await textSpacingStorage.set('normal');
+      await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
     },
   },
   {
@@ -171,12 +173,12 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
     state: 'dyslexic',
     onTurnOn: async () => {
       await dyslexicFontStorage.set('openDyslexic');
-      await textSpacingStorage.set('wide');
+      await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
     },
     onTurnOff: async () => {
       await dyslexicFontStorage.set('default');
-      await textSpacingStorage.set('normal');
+      await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
     },
   },
@@ -192,7 +194,7 @@ const displayTypeData = ['minimalis', 'penuh'];
 
 const SidePanel = () => {
   const [contrast, setContrast] = React.useState(contrastStorage.getSnapshot());
-  const [textSpacing, setTextSpacing] = React.useState(textSpacingStorage.getSnapshot());
+  const [textSpacing, setTextSpacing] = React.useState(textSpacingStoragePercentage.getSnapshot());
   const [dyslexic, setDyslexic] = React.useState(dyslexicFontStorage.getSnapshot());
   const [fontSize, setFontSize] = React.useState(fontSizeStoragePercentage.getSnapshot());
   const [hideImageState, setHideImageState] = React.useState(hideImagesStorage.getSnapshot());
@@ -203,6 +205,7 @@ const SidePanel = () => {
   const [highlightLink, setHighlightLink] = React.useState(linkHighlightStorage.getSnapshot());
   const [biggerCursor, setBiggerCursor] = React.useState(cursorBiggerStorage.getSnapshot());
   const [textAlignment, setTextAlignment] = React.useState(textAlignmentStorage.getSnapshot());
+  const [lineHeight, setLineHeight] = React.useState(lineHeightStorage.getSnapshot());
 
   const [userToken, setUserToken] = React.useState<string | null>(tokenAuthStorage.getSnapshot());
 
@@ -227,14 +230,17 @@ const SidePanel = () => {
   const [userData, setUserData] = React.useState<UserDataType | null>(null);
 
   React.useEffect(() => {
+    lineHeightStorage.subscribe(() => {
+      setLineHeight(lineHeightStorage.getSnapshot());
+    });
     textAlignmentStorage.subscribe(() => {
       setTextAlignment(textAlignmentStorage.getSnapshot());
     });
     contrastStorage.subscribe(() => {
       setContrast(contrastStorage.getSnapshot());
     });
-    textSpacingStorage.subscribe(() => {
-      setTextSpacing(textSpacingStorage.getSnapshot());
+    textSpacingStoragePercentage.subscribe(() => {
+      setTextSpacing(textSpacingStoragePercentage.getSnapshot());
     });
     dyslexicFontStorage.subscribe(() => {
       setDyslexic(dyslexicFontStorage.getSnapshot());
@@ -403,24 +409,24 @@ const SidePanel = () => {
       desc: 'Sesuaikan spasi teks untuk kenyamanan penyandang disabilitas visual.',
       icon: <IconLetterSpacing className="h-6 w-6" />,
       onClick: toggleTextSpacing,
-      currentState: textSpacing ? textSpacing : 'normal',
-      normalState: 'normal',
+      currentState: textSpacing ? textSpacing.toString() : FONT_SIZE_GUIDE.NORMAL.toString(),
+      normalState: FONT_SIZE_GUIDE.NORMAL.toString(),
       state: [
         {
           label: 'Jarak Teks',
-          value: 'normal',
-        },
-        {
-          label: 'Jarak Sangat Lebar',
-          value: 'extra-wide',
-        },
-        {
-          label: 'Jarak Lebar',
-          value: 'wide',
+          value: FONT_SIZE_GUIDE.NORMAL.toString(),
         },
         {
           label: 'Jarak Medium',
-          value: 'medium',
+          value: FONT_SIZE_GUIDE.MEDIUM.toString(),
+        },
+        {
+          label: 'Jarak Lebar',
+          value: FONT_SIZE_GUIDE.LARGE.toString(),
+        },
+        {
+          label: 'Jarak Sangat Lebar',
+          value: FONT_SIZE_GUIDE.EXTRA_LARGE.toString(),
         },
       ],
     },
@@ -518,7 +524,7 @@ const SidePanel = () => {
 
   const resetState = async () => {
     await contrastStorage.set('normal');
-    await textSpacingStorage.set('normal');
+    await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
     await dyslexicFontStorage.set('default');
     await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
     await hideImagesStorage.set('disabled');
@@ -526,6 +532,7 @@ const SidePanel = () => {
     await soundNavigationStorage.set('disabled');
     await focusReadStorage.set('disabled');
     await aiAssistantStorage.set('disabled');
+    await textAlignmentStorage.set('normal');
   };
 
   React.useEffect(() => {
@@ -801,7 +808,7 @@ const SidePanel = () => {
                       await fontSizeStoragePercentage.decrease();
                     }}
                     desc=""
-                    onClick={toggleFocusRead}
+                    // onClick={toggleFocusRead}
                     normalState={100}
                     wider
                     currentState={fontSize ?? 100}>
@@ -812,7 +819,7 @@ const SidePanel = () => {
                   </ControlAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={toggleFocusRead}
+                    onClick={toggleDyslexicFont}
                     currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
                     turnOnState={'openDyslexic'}>
                     <IconTextSpellcheck className="w-8 h-8" />
@@ -826,16 +833,41 @@ const SidePanel = () => {
                     <IconUnlink className="w-8 h-8" />
                     <p>Sorot Link</p>
                   </FullDisplayAccesibilityCard>
-                  <FullDisplayAccesibilityCard
+                  <ControlAccesibilityCard
+                    increaseHandler={async () => {
+                      await textSpacingStoragePercentage.increase();
+                    }}
+                    decreaseHandler={async () => {
+                      await textSpacingStoragePercentage.decrease();
+                    }}
                     desc=""
-                    onClick={toggleFocusRead}
-                    currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
+                    // onClick={toggleTextSpacing}
+                    normalState={100}
                     wider
-                    turnOnState={'openDyslexic'}>
-                    <IconLetterSpacing className="w-8 h-8" />
-                    <p>Atur Jarak Teks</p>
-                  </FullDisplayAccesibilityCard>
-                  <FullDisplayAccesibilityCard
+                    currentState={textSpacing ?? 100}>
+                    <div className="flex gap-2 items-center text-base justify-center">
+                      <IconLetterSpacing className="w-5 h-5" />
+                      <p>Atur Jarak Teks</p>
+                    </div>
+                  </ControlAccesibilityCard>
+                  <ControlAccesibilityCard
+                    increaseHandler={async () => {
+                      await lineHeightStorage.increase();
+                    }}
+                    decreaseHandler={async () => {
+                      await lineHeightStorage.decrease();
+                    }}
+                    desc=""
+                    // onClick={toggleTextSpacing}
+                    normalState={100}
+                    wider
+                    currentState={lineHeight ?? 100}>
+                    <div className="flex gap-2 items-center text-base justify-center">
+                      <IconLineHeight className="w-5 h-5" />
+                      <p>Atur Tinggi Baris</p>
+                    </div>
+                  </ControlAccesibilityCard>
+                  {/* <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleFocusRead}
                     currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
@@ -843,7 +875,7 @@ const SidePanel = () => {
                     turnOnState={'openDyslexic'}>
                     <IconLineHeight className="w-8 h-8" />
                     <p>Atur Tinggi Baris</p>
-                  </FullDisplayAccesibilityCard>
+                  </FullDisplayAccesibilityCard> */}
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={async () => {

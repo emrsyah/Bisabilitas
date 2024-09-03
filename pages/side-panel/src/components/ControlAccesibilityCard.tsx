@@ -2,7 +2,7 @@ import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 import React from 'react';
 
 interface ControlProps {
-  onClick: () => void;
+  // onClick: () => void;
   desc: string;
   children: React.ReactNode;
   currentState: number;

@@ -19,8 +19,8 @@ const AccesibilityCard = ({
     });
     return label;
   };
-  console.log('currentState', currentState);
-  console.log('state', state);
+  // console.log('currentState', currentState);
+  // console.log('state', state);
   return (
     <button
       key={title}
