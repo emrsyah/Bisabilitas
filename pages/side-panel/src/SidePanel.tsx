@@ -838,7 +838,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleHighlightLink}
-                    currentState={accesibilityData.find(d => d.title === 'Sorot Link')?.currentState ?? ''}
+                    currentState={highlightLink ?? "disabled"}
                     turnOnState={'enabled'}>
                     <IconUnlink className="w-8 h-8" />
                     <p>Sorot Link</p>
@@ -891,31 +891,37 @@ const SidePanel = () => {
                     onClick={async () => {
                       await textAlignmentStorage.set(textAlignment == 'left' ? 'normal' : 'left');
                     }}
-                    currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
+                    currentState={textAlignment ?? "normal"}
                     turnOnState={'left'}>
                     <IconAlignLeft className="w-8 h-8" />
                     <p>Teks Rata Kiri</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={hideImage}
-                    currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
+                    onClick={async () => {
+                      await textAlignmentStorage.set(textAlignment == 'right' ? 'normal' : 'right');
+                    }}
+                    currentState={textAlignment ?? "normal"}
                     turnOnState={'right'}>
                     <IconAlignRight className="w-8 h-8" />
                     <p>Teks Rata Kanan</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={hideImage}
-                    currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
+                    onClick={async () => {
+                      await textAlignmentStorage.set(textAlignment == 'center' ? 'normal' : 'center');
+                    }}
+                    currentState={textAlignment ?? "normal"}
                     turnOnState={'center'}>
                     <IconAlignCenter className="w-8 h-8" />
                     <p>Teks Rata Tengah</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={hideImage}
-                    currentState={accesibilityData.find(d => d.title === '')?.currentState ?? 'Rata Teks'}
+                    onClick={async () => {
+                      await textAlignmentStorage.set(textAlignment == 'justify' ? 'normal' : 'justify');
+                    }}
+                    currentState={textAlignment ?? "normal"}
                     turnOnState={'justify'}>
                     <IconAlignJustified className="w-8 h-8" />
                     <p>Teks Rata Selaras</p>
@@ -934,7 +940,7 @@ const SidePanel = () => {
                         await contrastStorage.set('high');
                       }
                     }}
-                    currentState={accesibilityData.find(d => d.title === 'Pengaturan Kontras')?.currentState ?? ''}
+                    currentState={contrast ?? "normal"}
                     turnOnState={'high'}>
                     <IconContrast className="w-8 h-8" />
                     <p>Kontras Tinggi</p>
@@ -956,7 +962,7 @@ const SidePanel = () => {
                         await saturationStorage.set('high');
                       }
                     }}
-                    currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
+                    currentState={saturation ?? "normal"}
                     turnOnState={'high'}>
                     <IconDropletFilled className="w-8 h-8" />
                     <p>Saturasi Tinggi</p>
@@ -970,7 +976,7 @@ const SidePanel = () => {
                         await saturationStorage.set('low');
                       }
                     }}
-                    currentState={accesibilityData.find(d => d.title === 'Pengatur Saturasi')?.currentState ?? ''}
+                    currentState={saturation ?? "normal"}
                     turnOnState={'low'}>
                     <IconDropletHalfFilled className="w-8 h-8" />
                     <p>Saturasi Rendah</p>
@@ -983,7 +989,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleFocusRead}
-                    currentState={accesibilityData.find(d => d.title === 'Fokus Membaca')?.currentState ?? ''}
+                    currentState={focusRead ?? "disabled"}
                     turnOnState={'enabled'}>
                     <IconBook className="w-8 h-8" />
                     <p>Fokus Membaca</p>
@@ -991,7 +997,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={hideImage}
-                    currentState={accesibilityData.find(d => d.title === 'Sembunyikan Gambar')?.currentState ?? ''}
+                    currentState={hideImageState ?? "disabled"}
                     turnOnState={'enabled'}>
                     <IconPhotoOff className="w-8 h-8" />
                     <p>Sembunyikan Gambar</p>
@@ -999,7 +1005,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={activateSoundNavigation}
-                    currentState={accesibilityData.find(d => d.title === 'Navigasi Suara')?.currentState ?? ''}
+                    currentState={soundNavigation ?? "disabled"}
                     turnOnState={'enabled'}>
                     <IconMicrophone className="w-8 h-8" />
                     <p>Navigasi Suara</p>
@@ -1007,7 +1013,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleBiggerCursor}
-                    currentState={accesibilityData.find(d => d.title === 'Cursor Besar')?.currentState ?? ''}
+                    currentState={biggerCursor ?? "disabled"}
                     turnOnState={'enabled'}>
                     <IconPointer className="w-8 h-8" />
                     <p>Perbesar Cursor</p>
