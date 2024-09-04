@@ -2,7 +2,7 @@ import { monochromeModeStorage } from '@chrome-extension-boilerplate/storage';
 
 export async function applyMonochromeMode() {
   function setMonochromeMode(status: "enabled" | "disabled") {
-    const elements = document.querySelectorAll('img, picture, video, *'); // Mencakup semua elemen di halaman
+    const elements = document.querySelectorAll('body'); // Mencakup semua elemen di halaman
 
     elements.forEach((element) => {
       if (element instanceof HTMLElement) {

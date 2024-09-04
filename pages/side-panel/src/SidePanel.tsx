@@ -15,7 +15,7 @@ import {
   fontSizeStoragePercentage,
   textSpacingStoragePercentage,
   lineHeightStorage,
-  monochromeModeStorage
+  monochromeModeStorage,
 } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 import Separator from './components/Separator';
@@ -46,10 +46,12 @@ import {
   IconLineHeight,
   IconMessageChatbotFilled,
   IconMicrophone,
+  IconMoon,
   IconPhotoOff,
   IconPointer,
   IconRefresh,
   IconStack2Filled,
+  IconSun,
   IconTextIncrease,
   IconTextSpellcheck,
   IconUnlink,
@@ -135,9 +137,9 @@ const toggleTextAlignment = async () => {
 
 const toggleMonochromeMode = async () => {
   await monochromeModeStorage.toggle();
-}
+};
 
-type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic';
+type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic' | "seizure" | "adhd";
 
 type AccesibilityProfileProps = {
   state: ProfileState;
@@ -151,13 +153,15 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
     name: 'Keterbatasan Visual',
     state: 'visual-impaired',
     onTurnOn: async () => {
-      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
-      await contrastStorage.set('high');
-      await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.EXTRA_LARGE);
+      await lineHeightStorage.set(FONT_SIZE_GUIDE.MEDIUM);
+      await saturationStorage.set('high');
+      await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.MEDIUM);
     },
     onTurnOff: async () => {
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
-      await contrastStorage.set('normal');
+      await lineHeightStorage.set(FONT_SIZE_GUIDE.NORMAL);
+      await saturationStorage.set('normal');
       await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
     },
   },
@@ -166,10 +170,15 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
     state: 'cognitife',
     onTurnOn: async () => {
       await focusReadStorage.set('enabled');
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.MEDIUM);
+      await lineHeightStorage.set(FONT_SIZE_GUIDE.MEDIUM);
+
       await hideImagesStorage.set('enabled');
     },
     onTurnOff: async () => {
       await focusReadStorage.set('disabled');
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
+      await lineHeightStorage.set(FONT_SIZE_GUIDE.NORMAL);
       await hideImagesStorage.set('disabled');
     },
   },
@@ -178,13 +187,41 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
     state: 'dyslexic',
     onTurnOn: async () => {
       await dyslexicFontStorage.set('openDyslexic');
-      await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
+      await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.MEDIUM);
+      await lineHeightStorage.set(FONT_SIZE_GUIDE.MEDIUM);
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.LARGE);
     },
     onTurnOff: async () => {
       await dyslexicFontStorage.set('default');
       await textSpacingStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
+      await lineHeightStorage.set(FONT_SIZE_GUIDE.NORMAL);
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
+    },
+  },
+  {
+    name: 'Epilepsi dan Seizure',
+    state: 'seizure',
+    onTurnOn: async () => {
+      await saturationStorage.set("low")
+    },
+    onTurnOff: async () => {
+      await saturationStorage.set("normal");
+    },
+  },
+  {
+    name: 'ADHD',
+    state: 'adhd',
+    onTurnOn: async () => {
+      await saturationStorage.set("high")
+      await focusReadStorage.set('enabled');
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.MEDIUM);
+      await lineHeightStorage.set(FONT_SIZE_GUIDE.MEDIUM);
+    },
+    onTurnOff: async () => {
+      await saturationStorage.set("normal");
+      await focusReadStorage.set('disabled');
+      await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
+      await lineHeightStorage.set(FONT_SIZE_GUIDE.NORMAL);
     },
   },
 ];
@@ -229,7 +266,7 @@ const SidePanel = () => {
 
   const [mode, setMode] = React.useState<'ai' | 'default' | 'account' | 'login' | 'register'>('default');
 
-  const [displayType, setDisplayType] = React.useState<'minimalis' | 'penuh'>('minimalis');
+  const [displayType, setDisplayType] = React.useState<'minimalis' | 'penuh'>('penuh');
   const [smallDisplay, setSmallDisplay] = React.useState(false);
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
 
@@ -542,7 +579,7 @@ const SidePanel = () => {
     await focusReadStorage.set('disabled');
     await aiAssistantStorage.set('disabled');
     await textAlignmentStorage.set('normal');
-    await monochromeModeStorage.set("disabled")
+    await monochromeModeStorage.set('disabled');
   };
 
   React.useEffect(() => {
@@ -838,7 +875,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleHighlightLink}
-                    currentState={highlightLink ?? "disabled"}
+                    currentState={highlightLink ?? 'disabled'}
                     turnOnState={'enabled'}>
                     <IconUnlink className="w-8 h-8" />
                     <p>Sorot Link</p>
@@ -891,7 +928,7 @@ const SidePanel = () => {
                     onClick={async () => {
                       await textAlignmentStorage.set(textAlignment == 'left' ? 'normal' : 'left');
                     }}
-                    currentState={textAlignment ?? "normal"}
+                    currentState={textAlignment ?? 'normal'}
                     turnOnState={'left'}>
                     <IconAlignLeft className="w-8 h-8" />
                     <p>Teks Rata Kiri</p>
@@ -901,7 +938,7 @@ const SidePanel = () => {
                     onClick={async () => {
                       await textAlignmentStorage.set(textAlignment == 'right' ? 'normal' : 'right');
                     }}
-                    currentState={textAlignment ?? "normal"}
+                    currentState={textAlignment ?? 'normal'}
                     turnOnState={'right'}>
                     <IconAlignRight className="w-8 h-8" />
                     <p>Teks Rata Kanan</p>
@@ -911,7 +948,7 @@ const SidePanel = () => {
                     onClick={async () => {
                       await textAlignmentStorage.set(textAlignment == 'center' ? 'normal' : 'center');
                     }}
-                    currentState={textAlignment ?? "normal"}
+                    currentState={textAlignment ?? 'normal'}
                     turnOnState={'center'}>
                     <IconAlignCenter className="w-8 h-8" />
                     <p>Teks Rata Tengah</p>
@@ -921,7 +958,7 @@ const SidePanel = () => {
                     onClick={async () => {
                       await textAlignmentStorage.set(textAlignment == 'justify' ? 'normal' : 'justify');
                     }}
-                    currentState={textAlignment ?? "normal"}
+                    currentState={textAlignment ?? 'normal'}
                     turnOnState={'justify'}>
                     <IconAlignJustified className="w-8 h-8" />
                     <p>Teks Rata Selaras</p>
@@ -934,13 +971,41 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={async () => {
+                      if (contrast == 'dark-contrast') {
+                        await contrastStorage.set('normal');
+                      } else {
+                        await contrastStorage.set('dark-contrast');
+                      }
+                    }}
+                    currentState={contrast ?? 'normal'}
+                    turnOnState={'dark-contrast'}>
+                    <IconMoon className="w-8 h-8" />
+                    <p>Kontras Gelaxp</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
+                      if (contrast == 'light-contrast') {
+                        await contrastStorage.set('normal');
+                      } else {
+                        await contrastStorage.set('light-contrast');
+                      }
+                    }}
+                    currentState={contrast ?? 'normal'}
+                    turnOnState={'light-contrast'}>
+                    <IconSun className="w-8 h-8" />
+                    <p>Kontras Terang</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={async () => {
                       if (contrast == 'high') {
                         await contrastStorage.set('normal');
                       } else {
                         await contrastStorage.set('high');
                       }
                     }}
-                    currentState={contrast ?? "normal"}
+                    currentState={contrast ?? 'normal'}
                     turnOnState={'high'}>
                     <IconContrast className="w-8 h-8" />
                     <p>Kontras Tinggi</p>
@@ -948,7 +1013,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleMonochromeMode}
-                    currentState={monochrome ?? "disabled"}
+                    currentState={monochrome ?? 'disabled'}
                     turnOnState={'enabled'}>
                     <IconContrastFilled className="w-8 h-8" />
                     <p>Konten Monokrom</p>
@@ -962,7 +1027,7 @@ const SidePanel = () => {
                         await saturationStorage.set('high');
                       }
                     }}
-                    currentState={saturation ?? "normal"}
+                    currentState={saturation ?? 'normal'}
                     turnOnState={'high'}>
                     <IconDropletFilled className="w-8 h-8" />
                     <p>Saturasi Tinggi</p>
@@ -976,7 +1041,7 @@ const SidePanel = () => {
                         await saturationStorage.set('low');
                       }
                     }}
-                    currentState={saturation ?? "normal"}
+                    currentState={saturation ?? 'normal'}
                     turnOnState={'low'}>
                     <IconDropletHalfFilled className="w-8 h-8" />
                     <p>Saturasi Rendah</p>
@@ -989,7 +1054,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleFocusRead}
-                    currentState={focusRead ?? "disabled"}
+                    currentState={focusRead ?? 'disabled'}
                     turnOnState={'enabled'}>
                     <IconBook className="w-8 h-8" />
                     <p>Fokus Membaca</p>
@@ -997,7 +1062,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={hideImage}
-                    currentState={hideImageState ?? "disabled"}
+                    currentState={hideImageState ?? 'disabled'}
                     turnOnState={'enabled'}>
                     <IconPhotoOff className="w-8 h-8" />
                     <p>Sembunyikan Gambar</p>
@@ -1005,7 +1070,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={activateSoundNavigation}
-                    currentState={soundNavigation ?? "disabled"}
+                    currentState={soundNavigation ?? 'disabled'}
                     turnOnState={'enabled'}>
                     <IconMicrophone className="w-8 h-8" />
                     <p>Navigasi Suara</p>
@@ -1013,7 +1078,7 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleBiggerCursor}
-                    currentState={biggerCursor ?? "disabled"}
+                    currentState={biggerCursor ?? 'disabled'}
                     turnOnState={'enabled'}>
                     <IconPointer className="w-8 h-8" />
                     <p>Perbesar Cursor</p>

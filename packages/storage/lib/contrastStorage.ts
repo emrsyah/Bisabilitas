@@ -1,6 +1,6 @@
 import { BaseStorage, createStorage, StorageType } from './base';
 
-export type Contrast = 'normal' | 'low' | 'medium' | 'high';
+export type Contrast = 'normal' | 'high' | "dark-contrast" | "light-contrast";
 
 type ContrastStorage = BaseStorage<Contrast> & {
   setContrast: (contrast: Contrast) => Promise<void>;
@@ -21,12 +21,12 @@ export const contrastStorage: ContrastStorage = {
     await storage.set(currentContrast => {
       switch (currentContrast) {
         case 'normal':
-          return 'low';
-        case 'low':
-          return 'medium';
-        case 'medium':
           return 'high';
         case 'high':
+          return 'dark-contrast';
+        case 'dark-contrast':
+          return 'light-contrast';
+        // case 'high':
         default:
           return 'normal';
       }
