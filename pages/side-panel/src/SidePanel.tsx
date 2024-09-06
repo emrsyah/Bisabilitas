@@ -57,6 +57,9 @@ import {
   IconUnlink,
   IconUser,
 } from '@tabler/icons-react';
+
+import dfLogo from '../public/df-logo.svg';
+
 import { ControlAccesibilityCard } from './components/ControlAccesibilityCard';
 // import {  useStorageSuspense } from '@chrome-extension-boilerplate/shared';
 // import { exampleThemeStorage, fontSizeStorage } from '@chrome-extension-boilerplate/storage';
@@ -139,7 +142,7 @@ const toggleMonochromeMode = async () => {
   await monochromeModeStorage.toggle();
 };
 
-type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic' | "seizure" | "adhd";
+type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic' | 'seizure' | 'adhd';
 
 type AccesibilityProfileProps = {
   state: ProfileState;
@@ -202,23 +205,23 @@ const accesibilityProfileDatas: AccesibilityProfileProps[] = [
     name: 'Epilepsi dan Seizure',
     state: 'seizure',
     onTurnOn: async () => {
-      await saturationStorage.set("low")
+      await saturationStorage.set('low');
     },
     onTurnOff: async () => {
-      await saturationStorage.set("normal");
+      await saturationStorage.set('normal');
     },
   },
   {
     name: 'ADHD',
     state: 'adhd',
     onTurnOn: async () => {
-      await saturationStorage.set("high")
+      await saturationStorage.set('high');
       await focusReadStorage.set('enabled');
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.MEDIUM);
       await lineHeightStorage.set(FONT_SIZE_GUIDE.MEDIUM);
     },
     onTurnOff: async () => {
-      await saturationStorage.set("normal");
+      await saturationStorage.set('normal');
       await focusReadStorage.set('disabled');
       await fontSizeStoragePercentage.set(FONT_SIZE_GUIDE.NORMAL);
       await lineHeightStorage.set(FONT_SIZE_GUIDE.NORMAL);
@@ -867,18 +870,25 @@ const SidePanel = () => {
                   <FullDisplayAccesibilityCard
                     desc=""
                     onClick={toggleDyslexicFont}
-                    currentState={accesibilityData.find(d => d.title === 'Font Ramah Disleksia')?.currentState ?? ''}
+                    currentState={dyslexic ?? 'default'}
                     turnOnState={'openDyslexic'}>
-                    <IconTextSpellcheck className="w-8 h-8" />
+                    <img src={dfLogo} alt="dyslexic font logo" className="w-8 h8" />
+                    {/* <IconTextSpellcheck className="w-8 h-8" /> */}
                     <p>Font Ramah Disleksia</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
-                    onClick={toggleHighlightLink}
-                    currentState={highlightLink ?? 'disabled'}
-                    turnOnState={'enabled'}>
-                    <IconUnlink className="w-8 h-8" />
-                    <p>Sorot Link</p>
+                    onClick={async () => {
+                      if (dyslexic == 'arial') {
+                        await dyslexicFontStorage.set('default');
+                      } else {
+                        await dyslexicFontStorage.set('arial');
+                      }
+                    }}
+                    currentState={dyslexic ?? 'default'}
+                    turnOnState={'arial'}>
+                    <IconTextSpellcheck className="w-8 h-8" />
+                    <p>Font Mudah Dibaca</p>
                   </FullDisplayAccesibilityCard>
                   <ControlAccesibilityCard
                     increaseHandler={async () => {
@@ -980,7 +990,7 @@ const SidePanel = () => {
                     currentState={contrast ?? 'normal'}
                     turnOnState={'dark-contrast'}>
                     <IconMoon className="w-8 h-8" />
-                    <p>Kontras Gelaxp</p>
+                    <p>Kontras Gelap</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
@@ -1082,6 +1092,14 @@ const SidePanel = () => {
                     turnOnState={'enabled'}>
                     <IconPointer className="w-8 h-8" />
                     <p>Perbesar Cursor</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleHighlightLink}
+                    currentState={highlightLink ?? 'disabled'}
+                    turnOnState={'enabled'}>
+                    <IconUnlink className="w-8 h-8" />
+                    <p>Sorot Link</p>
                   </FullDisplayAccesibilityCard>
                 </div>
               </div>

@@ -27,10 +27,13 @@ export async function applyDyslexicFont() {
     document.head.appendChild(style);
   }
 
-  function setFont(state: "default" | "openDyslexic") {
+  function setFont(state: 'default' | 'openDyslexic' | 'arial') {
     if (state === 'openDyslexic') {
       injectOpenDyslexicFont();
       document.body.style.fontFamily = "'OpenDyslexic', sans-serif";
+      // document.body.style.fontFamily = "'Arial', sans-serif";
+    } else if (state === 'arial') {
+      document.body.style.fontFamily = "'Arial', sans-serif";
     } else {
       document.body.style.fontFamily = '';
     }

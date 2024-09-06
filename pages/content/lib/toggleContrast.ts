@@ -57,6 +57,13 @@ export async function toggleContrast() {
         if (htmlElement instanceof HTMLElement) {
           htmlElement.style.filter = 'contrast(300%)';
         }
+        media.forEach(element => {
+          if (element instanceof HTMLElement) {
+            // console.log("medl",element.style.filter)
+            element.style.filter = 'none'; // Reset filter for media elements
+            // console.log("medl 2",element.style.filter)
+          }
+        });
         break;
 
       case 'normal':

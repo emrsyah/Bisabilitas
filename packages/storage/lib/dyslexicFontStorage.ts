@@ -1,6 +1,6 @@
 import { BaseStorage, createStorage, StorageType } from './base';
 
-type DyslexicFontState = 'default' | 'openDyslexic';
+type DyslexicFontState = 'default' | 'openDyslexic' | 'arial';
 
 type DyslexicFontStorage = BaseStorage<DyslexicFontState> & {
   toggle: () => Promise<void>;
@@ -15,7 +15,7 @@ export const dyslexicFontStorage: DyslexicFontStorage = {
   ...storage,
   toggle: async () => {
     await storage.set(currentState => {
-      return currentState === 'default' ? 'openDyslexic' : 'default';
+      return ((currentState === 'default') || (currentState == "arial")) ? 'openDyslexic' : 'default';
     });
   },
 };
