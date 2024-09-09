@@ -385,7 +385,7 @@ export default function App() {
                   <button
                     onClick={item.onClick}
                     key={item.title}
-                    className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-blue-600 relative">
+                    className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-full bg-yellow-800 relative">
                     <CircularProgress currentState={item.state!.findIndex((c) => c.value == item.currentState) + 1} totalStates={item.state!.length} />
                     <div className="z-10 text-white">{item.icon}</div>
                   </button>
@@ -401,7 +401,7 @@ export default function App() {
               //   (chrome as any).sidePanel.open({ windowId: window.id });
               // });
             }}
-            className="!w-16 !h-14 flex items-center justify-center rounded-l-full  bg-blue-100 text-lg font-bold text-blue-800 border-2 border-blue-500">
+            className="!w-16 !h-14 flex items-center justify-center rounded-l-full  bg-yellow-100 text-lg font-bold text-yellow-800 border-2 border-yellow-700">
             BI
           </button>
         </div>

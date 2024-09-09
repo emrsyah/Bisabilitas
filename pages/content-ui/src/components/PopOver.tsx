@@ -28,7 +28,7 @@ const Popover: React.FC<PopoverProps> = ({  children }) => {
 
   return (
     <div className="relative">
-        <button onClick={togglePopover} className="bg-white flex items-center justify-center text-blue-800 border-2 border-blue-600 font-bold h-12 w-12 rounded-full">
+        <button onClick={togglePopover} className="bg-white flex items-center justify-center text-yellow-800 border-2 border-yellow-800 font-bold h-12 w-12 rounded-full">
             <ChevronUpIcon className='h-5 w-5' />
         </button>
       {isOpen && (

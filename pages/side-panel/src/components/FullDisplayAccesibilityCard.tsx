@@ -21,7 +21,7 @@ export const FullDisplayAccesibilityCard: React.FC<FullDisplayProps> = ({
     <button
       onClick={onClick}
       aria-label={desc}
-      className={`border-card flex flex-col gap-2 items-center justify-center text-sm font-medium p-3 hover:border-blue-600 hover:text-blue-600 ${wider ? 'col-span-2' : ''} ${turnOnState === currentState ? 'border-blue-600 text-blue-600' : ''}`}>
+      className={`border-card flex flex-col gap-2 items-center justify-center text-sm font-medium p-3 hover:border-yellow-800 hover:text-yellow-800 ${wider ? 'col-span-2' : ''} ${turnOnState === currentState ? 'border-yellow-800 text-yellow-800' : ''}`}>
       {children}
     </button>
   );

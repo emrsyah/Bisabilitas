@@ -21,7 +21,7 @@ const Toggle: React.FC<ToggleProps> = ({ initialState = false, onToggle }) => {
         onClick={handleToggle}
         className={`
           w-10 h-5 flex items-center rounded-full p-1 cursor-pointer
-          ${isOn ? 'bg-blue-600 justify-end' : 'bg-gray-300 justify-start'}
+          ${isOn ? 'bg-yellow-800 justify-end' : 'bg-gray-300 justify-start'}
         `}>
         <div
           className={`

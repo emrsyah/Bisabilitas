@@ -145,7 +145,7 @@ export default function App() {
         <div className="bg-white rounded-lg shadow-lg p-4 max-h-96 overflow-y-auto">
           {chatHistory.map((msg, index) => (
             <div key={index} className={`mb-2 ${msg._getType() === 'human' ? 'text-right' : 'text-left'}`}>
-              <div className={`inline-block p-2 rounded-lg ${msg._getType() === 'human' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}>
+              <div className={`inline-block p-2 rounded-lg ${msg._getType() === 'human' ? 'bg-yellow-700 text-white' : 'bg-gray-200'}`}>
                 {/* {typeof(msg.content.valueOf()) == 'string' ? msg.content.valueOf() : "tes"} */}
                 {msg.content as string}
               </div>
@@ -158,9 +158,9 @@ export default function App() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about this page..."
-            className="flex-grow p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-grow p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-yellow-700"
           />
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <button type="submit" className="bg-yellow-700 text-white p-2 rounded-r-lg hover:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-700">
             <PaperAirplaneIcon className="w-6 h-6" />
           </button>
         </form>

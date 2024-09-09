@@ -1,8 +1,20 @@
 import { audioEnhancementStorage } from '@chrome-extension-boilerplate/storage';
 
+// Extend the HTMLMediaElement interface
+declare global {
+  interface HTMLMediaElement {
+    audioEnhancementNodes?: {
+      audioCtx: AudioContext;
+      source: MediaElementAudioSourceNode;
+      gainNode: GainNode;
+      biquadFilter: BiquadFilterNode;
+    };
+  }
+}
+
 export async function applyAudioEnhancement() {
   function setAudioEnhancement(state: "normal" | "loud" | "louder" | "loudest") {
-    const mediaElements = [...document.getElementsByTagName('audio'), ...document.getElementsByTagName('video')];
+    const mediaElements = [...Array.from(document.getElementsByTagName('audio')), ...Array.from(document.getElementsByTagName('video'))];
     
     mediaElements.forEach(element => {
       switch (state) {
@@ -25,7 +37,7 @@ export async function applyAudioEnhancement() {
   function enhanceAudio(element: HTMLMediaElement, volumeMultiplier: number, highShelfGain: number) {
     resetAudio(element); // Remove any existing enhancements
 
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioCtx = new AudioContext();
     const source = audioCtx.createMediaElementSource(element);
     const gainNode = audioCtx.createGain();
     const biquadFilter = audioCtx.createBiquadFilter();

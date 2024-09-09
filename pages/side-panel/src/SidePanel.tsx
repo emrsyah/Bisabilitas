@@ -697,7 +697,7 @@ const SidePanel = () => {
   const ButtonKembali = () => (
     <button
       type="button"
-      className="mb-2 text-blue-600 underline text-base font-medium text-start"
+      className="mb-2 text-yellow-800 underline text-base font-medium text-start"
       onClick={() => setMode('default')}>
       Kembali
     </button>
@@ -747,7 +747,7 @@ const SidePanel = () => {
         </main>
       ) : (
         <>
-          <div className="bg-blue-900 text-white p-2">
+          <div className="bg-yellow-900 text-white p-2">
             <nav className="mx-4 sm:mx-auto my-2 max-w-2xl flex items-center justify-between">
               <h1 className="font-semibold text-xl">Bisabilitas - X</h1>
               {/* <h1>{env}</h1> */}
@@ -755,7 +755,7 @@ const SidePanel = () => {
                 onClick={() => {
                   setMode(userToken !== null ? 'account' : 'login');
                 }}
-                className="w-8 text-black hover:bg-blue-100 h-8 rounded-md justify-center items-center flex bg-white ">
+                className="w-8 text-black hover:bg-yellow-100 h-8 rounded-md justify-center items-center flex bg-white ">
                 <IconUser className="w-8 h-8" />
                 {/* <h1 className=" font-bold ">ID</h1> */}
               </button>
@@ -765,7 +765,7 @@ const SidePanel = () => {
             {/* Hilangin AI dulu */}
             <button
               onClick={() => setMode('ai')}
-              className={`col-span-2 flex gap-2  items-center hover:border-blue-600 ${aiAssistant == 'enabled' ? 'bg-blue-600 text-white' : ' bg-white '} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
+              className={`col-span-2 flex gap-2  items-center hover:border-yellow-800 ${aiAssistant == 'enabled' ? 'bg-yellow-800 text-white' : ' bg-white '} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
               <IconMessageChatbotFilled className="h-6 w-6" />
               <h1 className="text-lg font-bold ">
                 AI Assistant <span className="text-sm">(beta)</span>
@@ -793,7 +793,7 @@ const SidePanel = () => {
                           a.onTurnOn();
                         }
                       }}
-                      className={`w-full cursor-pointer rounded text-start font-medium px-4 py-2 text-sm text-gray-700   ${a.state == accesibilityProfile ? 'bg-blue-600 text-white' : 'hover:bg-blue-100 hover:text-blue-900'}`}
+                      className={`w-full cursor-pointer rounded text-start font-medium px-4 py-2 text-sm text-gray-700   ${a.state == accesibilityProfile ? 'bg-yellow-800 text-white' : 'hover:bg-yellow-100 hover:text-yellow-900'}`}
                       role="menuitem">
                       {a.name}
                     </button>
@@ -809,7 +809,7 @@ const SidePanel = () => {
                     setDisplayType(d as 'minimalis' | 'penuh');
                   }}
                   key={d}
-                  className={`flex items-center gap-2 flex-1 flex-grow border-gray-100 shadow border-[2px] rounded p-2 ${displayType == d ? ' border-blue-600 text-blue-600' : null} `}>
+                  className={`flex items-center gap-2 flex-1 flex-grow border-gray-100 shadow border-[2px] rounded p-2 ${displayType == d ? ' border-yellow-800 text-yellow-800' : null} `}>
                   {d == 'minimalis' ? (
                     <IconStack2Filled className="h-6 w-6" />
                   ) : (
@@ -823,7 +823,7 @@ const SidePanel = () => {
             <div className="flex items-center justify-between col-span-2">
               {/* <h2 className="text-lg font-bold">Fitur Aksesibilitas</h2> */}
               <button
-                className="p-2 flex items-center justify-center rounded border-[1.3px] text-gray-900 hover:border-blue-600 hover:text-blue-600 text-base gap-2 font-medium ml-auto"
+                className="p-2 flex items-center justify-center rounded border-[1.3px] text-gray-900 hover:border-yellow-800 hover:text-yellow-800 text-base gap-2 font-medium ml-auto"
                 onClick={resetState}>
                 <p>Atur ulang</p>
                 <IconRefresh className="h-4 w-4" />
@@ -1068,6 +1068,14 @@ const SidePanel = () => {
                     turnOnState={'enabled'}>
                     <IconBook className="w-8 h-8" />
                     <p>Fokus Membaca</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleFocusRead}
+                    currentState={focusRead ?? 'disabled'}
+                    turnOnState={'enabled'}>
+                    <IconBook className="w-8 h-8" />
+                    <p>Kamus KBBI</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
