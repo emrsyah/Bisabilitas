@@ -19,8 +19,10 @@ import {fontSizeStoragePercentage} from './fontSizePercentageStorage'
 import {textSpacingStoragePercentage} from './textSpacingPercentageStorage'
 import {lineHeightStorage} from './lineHeightStorage'
 import {monochromeModeStorage} from './monochromeModeStorage'
+import {textMagnifierStorage} from './textMagnifierStorage'
 
 export {
+  textMagnifierStorage,
   monochromeModeStorage,
   lineHeightStorage,
   textSpacingStoragePercentage,

@@ -11,6 +11,7 @@ import {
   soundNavigationStorage,
   textSpacingStorage,
 } from '../../../packages/storage/dist/esm';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Popover from './components/PopOver';
 import {
   ArrowsPointingOutIcon,
@@ -25,6 +26,9 @@ import {
   SpeakerWaveIcon,
 } from '@heroicons/react/16/solid';
 import React from 'react';
+import axios from 'axios';
+import OptimazeWebsite from './components/OptimazeWebsite';
+// import axios from 'axios';
 
 export type StateProps = {
   label: string;
@@ -88,6 +92,21 @@ const toggleBiggerCursor = async () => {
   await cursorBiggerStorage.toggle();
 };
 
+type ElementDetail = {
+  html: string;
+  target: string[];
+  improvement: string;
+};
+
+type AccessibilityIssue = {
+  id: string;
+  description: string;
+  impact: 'critical' | 'serious' | 'moderate' | 'minor';
+  help: string;
+  helpUrl: string;
+  element: ElementDetail[];
+};
+
 export default function App() {
   const contrastStore = useStorageSuspense(contrastStorage);
   const textSpaceStore = useStorageSuspense(textSpacingStorage);
@@ -110,6 +129,8 @@ export default function App() {
   const [focusRead, setFocusRead] = React.useState(focusReadStore);
   const [highlightLink, setHighlightLink] = React.useState(linkHighlightStore);
   const [biggerCursor, setBiggerCursor] = React.useState(bigCursorStore);
+
+  const [violations, setViolations] = React.useState<AccessibilityIssue[]>([]);
 
   React.useEffect(() => {
     if (contrast !== contrastStore) {
@@ -367,11 +388,53 @@ export default function App() {
     },
   ];
 
+  function replaceElement(selector: string, newHtml: string): void {
+    const oldElement = document.querySelector(selector);
+    if (oldElement instanceof Element) {
+      const template = document.createElement('template');
+      template.innerHTML = newHtml.trim();
+
+      if (template.content.childElementCount > 1) {
+        console.warn('New HTML contains multiple top-level elements. Only the first will be used.');
+      }
+
+      const newElement = template.content.firstElementChild;
+      if (newElement) {
+        oldElement.replaceWith(newElement);
+      } else {
+        console.error('New HTML does not contain a valid element');
+      }
+    } else {
+      console.error(`No element found with selector: ${selector}`);
+    }
+  }
+
+  const optimazeWebsite = async () => {
+    const data = {
+      url: window.location.href,
+    };
+    console.log(data);
+    const res = await axios.post('http://localhost:5000/api/v1/ai/improve-accessibility', data);
+    const violationsLocal: AccessibilityIssue[] = res.data.finalViolations;
+    setViolations(violationsLocal);
+    violationsLocal.map(v => {
+      if (v.id !== 'color-contrast') {
+        v.element.map(el => {
+          // console.log(el)
+          replaceElement(el.target[0], el.improvement);
+        });
+      }
+    });
+  };
+
+  const queryClient = new QueryClient()
+
+
   return (
     true && (
       <div className="gap-4 fixed bottom-7 right-0">
-        <div className="flex flex-col items-center gap-3">
-          <Popover>
+        <div className="flex flex-col gap-3 items-end">
+          {/* <Popover>
             <div className="h-72">
               <div
                 style={{
@@ -392,8 +455,12 @@ export default function App() {
                 ))}
               </div>
             </div>
-          </Popover>
+          </Popover> */}
+          <QueryClientProvider client={queryClient}>
+            <OptimazeWebsite />
+          </QueryClientProvider>
           <button
+            aria-label="Open Bisabilitas"
             onClick={() => {
               console.log(chrome.runtime.sendMessage({}));
               chrome.runtime.sendMessage({ action: 'open_side_panel' });

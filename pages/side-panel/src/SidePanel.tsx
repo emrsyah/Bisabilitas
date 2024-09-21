@@ -16,6 +16,7 @@ import {
   textSpacingStoragePercentage,
   lineHeightStorage,
   monochromeModeStorage,
+  textMagnifierStorage,
 } from '@chrome-extension-boilerplate/storage';
 import React from 'react';
 import Separator from './components/Separator';
@@ -35,27 +36,30 @@ import {
   IconAlignLeft,
   IconAlignRight,
   IconBook,
+  IconBook2,
   IconChevronLeft,
   IconContrast,
   IconContrastFilled,
   IconDropletFilled,
   IconDropletHalf2,
   IconDropletHalfFilled,
-  IconLayout2Filled,
   IconLetterSpacing,
   IconLineHeight,
-  IconMessageChatbotFilled,
+  IconListSearch,
+  IconMessageChatbot,
   IconMicrophone,
   IconMoon,
   IconPhotoOff,
   IconPointer,
   IconRefresh,
-  IconStack2Filled,
   IconSun,
   IconTextIncrease,
   IconTextSpellcheck,
   IconUnlink,
   IconUser,
+  IconUserScan,
+  IconVolume,
+  IconWorldBolt,
 } from '@tabler/icons-react';
 
 import dfLogo from '../public/df-logo.svg';
@@ -140,6 +144,10 @@ const toggleTextAlignment = async () => {
 
 const toggleMonochromeMode = async () => {
   await monochromeModeStorage.toggle();
+};
+
+const toggleTextMagnifier = async () => {
+  await textMagnifierStorage.toggle();
 };
 
 type ProfileState = null | 'cognitife' | 'visual-impaired' | 'dyslexic' | 'seizure' | 'adhd';
@@ -252,6 +260,7 @@ const SidePanel = () => {
   const [textAlignment, setTextAlignment] = React.useState(textAlignmentStorage.getSnapshot());
   const [lineHeight, setLineHeight] = React.useState(lineHeightStorage.getSnapshot());
   const [monochrome, setMonochrome] = React.useState(monochromeModeStorage.getSnapshot());
+  const [textMagnifier, setTextMagnifier] = React.useState(textMagnifierStorage.getSnapshot());
 
   const [userToken, setUserToken] = React.useState<string | null>(tokenAuthStorage.getSnapshot());
 
@@ -273,9 +282,14 @@ const SidePanel = () => {
   const [smallDisplay, setSmallDisplay] = React.useState(false);
   const [accesibilityProfile, setAccesibilityProfile] = React.useState<ProfileState>(null);
 
+  const [currentUrl, setCurrentUrl] = React.useState<string>('');
+
   const [userData, setUserData] = React.useState<UserDataType | null>(null);
 
   React.useEffect(() => {
+    textMagnifierStorage.subscribe(() => {
+      setTextMagnifier(textMagnifierStorage.getSnapshot());
+    });
     monochromeModeStorage.subscribe(() => {
       setMonochrome(monochromeModeStorage.getSnapshot());
     });
@@ -583,6 +597,7 @@ const SidePanel = () => {
     await aiAssistantStorage.set('disabled');
     await textAlignmentStorage.set('normal');
     await monochromeModeStorage.set('disabled');
+    await textMagnifierStorage.set('disabled');
   };
 
   React.useEffect(() => {
@@ -615,6 +630,32 @@ const SidePanel = () => {
     getUserData();
     // console.log(import.meta.env)
   }, [userToken]);
+
+  React.useEffect(() => {
+    const getCurrentTabUrl = () => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        // console.log(tabs)
+        if (tabs[0] && tabs[0].url && tabs[0].favIconUrl && tabs[0].title) {
+          setCurrentUrl(tabs[0].url);
+        }
+      });
+    };
+
+    // Get the URL when the component mounts
+    getCurrentTabUrl();
+
+    // Set up a listener for tab updates
+    chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+      if (changeInfo.status === 'complete') {
+        getCurrentTabUrl();
+      }
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      chrome.tabs.onUpdated.removeListener(getCurrentTabUrl);
+    };
+  }, [])
 
   const queryClient = new QueryClient();
 
@@ -703,6 +744,23 @@ const SidePanel = () => {
     </button>
   );
 
+  const optimazeWebsite = async () => {
+    const data = {
+      url: currentUrl,
+    }
+    console.log(data);
+    const res = await axios.post('http://localhost:5000/api/v1/ai/improve-accessibility', data)
+    console.log(res.data)
+    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      if (tabs[0].id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "optimazeWeb",
+          data: res.data.finalViolations
+        });
+      }
+    });
+  }
+
   if (mode === 'login')
     return (
       <Login handleLogin={handleLogin} loginData={loginData} setLoginData={setLoginData} setMode={setMode}>
@@ -749,7 +807,7 @@ const SidePanel = () => {
         <>
           <div className="bg-yellow-900 text-white p-2">
             <nav className="mx-4 sm:mx-auto my-2 max-w-2xl flex items-center justify-between">
-              <h1 className="font-semibold text-xl">Bisabilitas - X</h1>
+              <h1 className="font-semibold text-xl">Bisabilitas</h1>
               {/* <h1>{env}</h1> */}
               <button
                 onClick={() => {
@@ -765,15 +823,24 @@ const SidePanel = () => {
             {/* Hilangin AI dulu */}
             <button
               onClick={() => setMode('ai')}
-              className={`col-span-2 flex gap-2  items-center hover:border-yellow-800 ${aiAssistant == 'enabled' ? 'bg-yellow-800 text-white' : ' bg-white '} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
-              <IconMessageChatbotFilled className="h-6 w-6" />
+              className={`col-span-2 flex gap-2  items-center hover:border-yellow-800 hover:text-yellow-800 ${aiAssistant == 'enabled' ? 'bg-yellow-800 text-white' : ' bg-white '} px-4 py-3 rounded-md border-[2px] border-gray-100`}>
+              <IconMessageChatbot className="h-6 w-6" />
               <h1 className="text-lg font-bold ">
-                AI Assistant <span className="text-sm">(beta)</span>
+                AI Assistant
+                {/* <span className="text-sm">(beta)</span> */}
               </h1>
             </button>
+            <div className="px-4 py-4 rounded-md border-[2px] border-gray-100 col-span-2 flex justify-between">
+              <div className="flex col-span-2 gap-2 text-base font-medium ">
+                <IconWorldBolt className="h-6 w-6" />
+                <p>AI Optimasi Konten</p>
+              </div>
+              <button type='button' onClick={optimazeWebsite}>Activates</button>
+              {/* <Toggle /> */}
+            </div>
             <Separator />
             <div className="col-span-2">
-              <Accordion title="Profil Aksesibilitas">
+              <Accordion icon={<IconUserScan className="h-6 w-6" />} title="Profil Aksesibilitas">
                 <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                   {accesibilityProfileDatas.map(a => (
                     <button
@@ -802,7 +869,7 @@ const SidePanel = () => {
               </Accordion>
             </div>
             <Separator />
-            <div className="col-span-2 flex items-center justify-between gap-2 w-full ">
+            {/* <div className="col-span-2 flex items-center justify-between gap-2 w-full ">
               {displayTypeData.map(d => (
                 <button
                   onClick={() => {
@@ -819,7 +886,7 @@ const SidePanel = () => {
                 </button>
               ))}
             </div>
-            <Separator />
+            <Separator /> */}
             <div className="flex items-center justify-between col-span-2">
               {/* <h2 className="text-lg font-bold">Fitur Aksesibilitas</h2> */}
               <button
@@ -1074,8 +1141,16 @@ const SidePanel = () => {
                     onClick={toggleFocusRead}
                     currentState={focusRead ?? 'disabled'}
                     turnOnState={'enabled'}>
-                    <IconBook className="w-8 h-8" />
+                    <IconBook2 className="w-8 h-8" />
                     <p>Kamus KBBI</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
+                    onClick={toggleTextMagnifier}
+                    currentState={textMagnifier ?? 'disabled'}
+                    turnOnState={'enabled'}>
+                    <IconListSearch className="w-8 h-8" />
+                    <p>Pembesar Teks</p>
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
@@ -1095,6 +1170,14 @@ const SidePanel = () => {
                   </FullDisplayAccesibilityCard>
                   <FullDisplayAccesibilityCard
                     desc=""
+                    onClick={activateSoundNavigation}
+                    currentState={soundNavigation ?? 'disabled'}
+                    turnOnState={'enabled'}>
+                    <IconVolume className="w-8 h-8" />
+                    <p>Perbesar Suara</p>
+                  </FullDisplayAccesibilityCard>
+                  <FullDisplayAccesibilityCard
+                    desc=""
                     onClick={toggleBiggerCursor}
                     currentState={biggerCursor ?? 'disabled'}
                     turnOnState={'enabled'}>
@@ -1110,6 +1193,9 @@ const SidePanel = () => {
                     <p>Sorot Link</p>
                   </FullDisplayAccesibilityCard>
                 </div>
+
+                {/* <button></button> */}
+
               </div>
             )}
           </main>

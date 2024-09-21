@@ -4,7 +4,6 @@ let popupElement: HTMLElement | null = null;
 
 export const askKbbi = () => {
   if (popupElement == null) {
-    console.log(popupElement);
     document.addEventListener('mouseup', handleMouseUp);
   }
 };
@@ -13,7 +12,6 @@ function handleMouseUp(event: MouseEvent) {
   const selectedText = window.getSelection()?.toString().trim();
 
   if (popupElement && popupElement.contains(event.target as Node)) {
-    // If the popup contains the mouseup event target, do nothing
     return;
   }
 
@@ -78,14 +76,6 @@ async function fetchDefinition(word: string) {
     if(popupElement){
         popupElement.textContent = res.data.definition
     }
-//   console.log('fetchDefinition called');
-//   // Simulating API call with setTimeout
-//   setTimeout(() => {
-//     if (popupElement) {
-//       // Replace this with your actual API call
-//       popupElement.textContent = `Definition for "${word}": Sample definition here.`;
-//     }
-//   }, 1500); // Simulating a 1.5 second delay
 }
 
 function hidePopup(): void {
